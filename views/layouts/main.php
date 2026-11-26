@@ -12,6 +12,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.
 $this->registerJsFile('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js', ['depends' => [\yii\web\JqueryAsset::class]]);
 
 $currentRoute = Yii::$app->controller ? Yii::$app->controller->route : '';
+$companyLogo = Yii::$app->params['companyLogo'] ?? '/uploads/logo.png';
 
 // Helper to check route access matching CMS route permissions
 if (!function_exists('canAccessRoute')) {
@@ -492,7 +493,7 @@ body.crm-body {
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title ?: Yii::$app->name) ?></title>
 
-    <link rel="icon" type="image/png" href="/uploads/logo.png" onerror="this.href='/favicon.ico'">
+    <link rel="icon" type="image/png" href="<?= Html::encode($companyLogo) ?>" onerror="this.href='/favicon.ico'">
 
     <?php $this->head() ?>
 </head>
@@ -506,7 +507,7 @@ body.crm-body {
     <aside class="crm-sidebar" id="crmSidebar">
         <div class="brand-block">
             <div class="brand-logo">
-                <img src="/uploads/logo.png" alt="Logo" class="sidebar-logo" onerror="this.style.display='none'">
+                <img src="<?= Html::encode($companyLogo) ?>" alt="<?= Html::encode(Yii::$app->name) ?> logo" class="sidebar-logo" onerror="this.style.display='none'">
             </div>
             <div>
                 <div class="brand-title"><?= Html::encode(Yii::$app->name) ?></div>
@@ -632,7 +633,7 @@ body.crm-body {
                     </button>
 
                     <div class="crm-topbar-left">
-                        <img src="/uploads/logo.png" alt="Logo" class="crm-topbar-logo" onerror="this.style.display='none'">
+                        <img src="<?= Html::encode($companyLogo) ?>" alt="<?= Html::encode(Yii::$app->name) ?> logo" class="crm-topbar-logo" onerror="this.style.display='none'">
                         <div style="min-width:0;">
                             <div class="crm-topbar-title"><?= Html::encode(Yii::$app->name) ?></div>
                             <div class="crm-topbar-subtitle">Enterprise Workspace</div>
