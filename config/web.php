@@ -50,6 +50,9 @@ $config = [
         'users' => [
             'class' => 'app\modules\users\Module',
         ],
+        'academic' => [
+            'class' => 'app\modules\academic\Module',
+        ],
     ],
     'components' => [
         'request' => [

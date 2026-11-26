@@ -48,6 +48,15 @@ $canAccessUsersAndRights = !Yii::$app->user->isGuest && (
     canAccessRoute('/rights/permission') ||
     canAccessRoute('/rights/route')
 );
+
+$canAccessAcademic = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/academic/*') ||
+    canAccessRoute('/academic/directory/index')
+);
 ?>
 
 <style>
@@ -509,6 +518,42 @@ body.crm-body {
             <a class="nav-link <?= isMenuActive(['/site/index', '']) ?>" href="<?= Url::to(['/site/index']) ?>">
                 <i class="fa-solid fa-house"></i> Dashboard
             </a>
+
+            <?php if ($canAccessAcademic): ?>
+                <?php
+                $isAcademicActive = strpos($currentRoute, 'academic/') === 0;
+                $currentAcademicEntity = Yii::$app->request->get('entity', '');
+                ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isAcademicActive ? 'active' : '' ?>" href="<?= Url::to(['/academic']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-graduation-cap"></i> Academic Management
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isAcademicActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#academicSubmenu"
+                                aria-expanded="<?= $isAcademicActive ? 'true' : 'false' ?>" aria-label="Toggle Academic submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isAcademicActive ? 'show' : '' ?> crm-submenu" id="academicSubmenu">
+                        <a class="nav-link <?= $currentRoute === 'academic/directory/index' ? 'active' : '' ?>" href="<?= Url::to(['/academic']) ?>">
+                            <i class="fa-solid fa-house"></i> Overview
+                        </a>
+                        <a class="nav-link <?= $currentAcademicEntity === 'courses' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'courses']) ?>">
+                            <i class="fa-solid fa-book-open"></i> Courses
+                        </a>
+                        <a class="nav-link <?= $currentAcademicEntity === 'subjects' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'subjects']) ?>">
+                            <i class="fa-solid fa-book"></i> Subjects
+                        </a>
+                        <a class="nav-link <?= $currentAcademicEntity === 'batches' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'batches']) ?>">
+                            <i class="fa-solid fa-layer-group"></i> Batches
+                        </a>
+                        <a class="nav-link <?= $currentAcademicEntity === 'sections' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'sections']) ?>">
+                            <i class="fa-solid fa-list"></i> Sections
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <?php if ($canAccessUsersAndRights): ?>
                 <?php $isUsersActive = strpos($currentRoute, 'users/') === 0 || strpos($currentRoute, 'user/') === 0 || strpos($currentRoute, 'rights') === 0; ?>
