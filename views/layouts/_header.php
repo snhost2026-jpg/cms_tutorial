@@ -16,10 +16,24 @@ $canAccessUsersAndRights = !Yii::$app->user->isGuest && (
     \app\components\AccessHelper::checkRoute('/users/*')
 );
 
+$canAccessAcademic = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    \app\components\AccessHelper::checkRoute('/academic/*') ||
+    \app\components\AccessHelper::checkRoute('/academic/directory/index')
+);
+
 $items = [
     [
         'label' => 'Home',
         'url' => ['/site/index'],
+    ],
+    [
+        'label' => 'Academic',
+        'url' => ['/academic'],
+        'visible' => $canAccessAcademic,
     ],
     [
         'label' => 'Users',

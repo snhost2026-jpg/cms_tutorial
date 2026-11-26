@@ -17,6 +17,8 @@ if (file_exists($envFile)) {
 }
 
 return [
+    'companyName' => getenv('COMPANY_NAME') ?: 'SARGNEXUS CMS',
+    'companyLogo' => getenv('COMPANY_LOGO') ?: '/uploads/logo.png',
     'adminEmail' => getenv('ADMIN_EMAIL') ?: 'admin@example.com',
     'senderEmail' => getenv('SENDER_EMAIL') ?: 'noreply@example.com',
     'senderName' => getenv('SENDER_NAME') ?: 'SARGNEXUS CMS',

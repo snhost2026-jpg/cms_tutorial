@@ -1,6 +1,8 @@
 <?php
 use yii\helpers\Html;
 
+$companyLogo = Yii::$app->params['companyLogo'] ?? '/uploads/logo.png';
+
 $this->registerCssFile('https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css');
 $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css');
 ?>
@@ -91,7 +93,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.
         <!-- BRAND CARD -->
         <div class="brand-card d-flex align-items-center">
             <div style="flex:0 0 auto;">
-                <img src="/uploads/logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+                <img src="<?= Html::encode($companyLogo) ?>" alt="<?= Html::encode(Yii::$app->name) ?> logo" class="brand-logo" onerror="this.style.display='none'">
             </div>
             <div style="margin-left:15px;">
                 <h1 class="brand-title"><?= Html::encode(Yii::$app->name) ?></h1>

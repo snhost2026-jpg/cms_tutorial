@@ -8,7 +8,7 @@ $db = require __DIR__ . '/db.php';
 
 $config = [
     'id' => 'cms-tutorial',
-    'name' => 'SARGNEXUS CMS',
+    'name' => $params['companyName'],
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'timeZone' => 'Asia/Kolkata',
@@ -49,6 +49,9 @@ $config = [
         ],
         'users' => [
             'class' => 'app\modules\users\Module',
+        ],
+        'academic' => [
+            'class' => 'app\modules\academic\Module',
         ],
     ],
     'components' => [
