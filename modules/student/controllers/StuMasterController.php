@@ -220,7 +220,7 @@ class StuMasterController extends Controller
 
         $out = fopen('php://temp', 'r+');
         fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM so Excel reads accents correctly
-        fputcsv($out, array_merge(array_keys($columns), ['Course', 'Batch', 'Section', 'Branch', 'Status']));
+        fputcsv($out, array_merge(array_keys($columns), ['Course', 'Batch', 'Section', 'Status']));
 
         foreach ($query->each(500) as $master) {
             /* @var $master StuMaster */
@@ -231,7 +231,6 @@ class StuMasterController extends Controller
             $row[] = $master->stu_master_course_id;
             $row[] = $master->stu_master_batch_id;
             $row[] = $master->stu_master_section_id;
-            $row[] = $master->stu_master_branch_id;
             $row[] = $master->statusLabel;
             fputcsv($out, $row);
         }
@@ -262,7 +261,7 @@ class StuMasterController extends Controller
     protected function classLists()
     {
         $result = [];
-        foreach (['course', 'batch', 'section', 'branch'] as $key) {
+        foreach (['course', 'batch', 'section'] as $key) {
             $list = isset($this->module->classLists[$key]) ? $this->module->classLists[$key] : [];
             if (is_callable($list)) {
                 $list = call_user_func($list);

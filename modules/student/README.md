@@ -5,7 +5,7 @@ A small Yii2 module that stores each student in two tables:
 | Table | Holds |
 |---|---|
 | `stu_info` | identity, contact, admission date, father, mother, guardian, address, previous school, emergency contact |
-| `stu_master` | class placement (course, batch, section, branch), login user id, audit columns, soft-delete flag |
+| `stu_master` | class placement (course, batch, section), login user id, audit columns, soft-delete flag |
 
 * **No field is mandatory** (form, model rules and database columns).
 * **No foreign keys.** The tables link to each other by plain id columns.
@@ -32,7 +32,6 @@ A small Yii2 module that stores each student in two tables:
             'course'  => function () { /* return [id => label] */ return []; },
             'batch'   => [1 => '2026-27'],
             'section' => [1 => 'A', 2 => 'B'],
-            'branch'  => [],
         ],
     ],
 ],

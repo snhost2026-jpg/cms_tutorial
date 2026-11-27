@@ -22,7 +22,6 @@ use yii\db\Expression;
  * @property int $stu_master_course_id
  * @property int $stu_master_batch_id
  * @property int $stu_master_section_id
- * @property int $stu_master_branch_id
  * @property string $created_at
  * @property int $created_by
  * @property string $updated_at
@@ -71,7 +70,7 @@ class StuMaster extends ActiveRecord
     {
         $ids = [
             'stu_master_user_id', 'stu_master_course_id', 'stu_master_batch_id',
-            'stu_master_section_id', 'stu_master_branch_id',
+            'stu_master_section_id',
         ];
 
         return [
@@ -92,7 +91,6 @@ class StuMaster extends ActiveRecord
             'stu_master_course_id' => 'Course / Class',
             'stu_master_batch_id' => 'Batch / Year',
             'stu_master_section_id' => 'Section',
-            'stu_master_branch_id' => 'Branch / Wing',
             'created_at' => 'Created At',
             'created_by' => 'Created By',
             'updated_at' => 'Updated At',

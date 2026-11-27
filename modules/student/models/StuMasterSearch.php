@@ -19,7 +19,7 @@ class StuMasterSearch extends StuMaster
         return [
             [['name', 'stu_unique_id', 'gender', 'mobile'], 'safe'],
             [['stu_master_course_id', 'stu_master_batch_id', 'stu_master_section_id',
-              'stu_master_branch_id', 'is_status'], 'integer'],
+              'is_status'], 'integer'],
         ];
     }
 
@@ -80,7 +80,6 @@ class StuMasterSearch extends StuMaster
             'stu_master.stu_master_course_id' => $this->stu_master_course_id,
             'stu_master.stu_master_batch_id' => $this->stu_master_batch_id,
             'stu_master.stu_master_section_id' => $this->stu_master_section_id,
-            'stu_master.stu_master_branch_id' => $this->stu_master_branch_id,
         ]);
         if (!$trash) {
             $query->andFilterWhere(['stu_master.is_status' => $this->is_status]);
