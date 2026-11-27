@@ -55,6 +55,7 @@ $config = [
         ],
         'student' => [
             'class' => 'app\modules\student\StudentModule',
+            'createLogin' => true,
             'classLists' => [
                 'course' => function () {
                     if (class_exists(\app\modules\academic\models\Course::class)) {
@@ -141,6 +142,7 @@ $config = [
                 'rights/<controller:[\w\-]+>/<action:[\w\-]+>' => 'rights/<controller>/<action>',
                 'rights/<controller:[\w\-]+>' => 'rights/<controller>/index',
                 'rights' => 'rights/assignment/index',
+                'attendance' => 'academic/attendance/index',
                 'user/<action:[\w\-]+>' => 'users/user/<action>',
                 'user' => 'users/user/index',
                 'student/<action:[\w\-]+>' => 'student/stu-master/<action>',

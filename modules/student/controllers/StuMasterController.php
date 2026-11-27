@@ -6,7 +6,6 @@ use Yii;
 use app\modules\student\models\StuInfo;
 use app\modules\student\models\StuMaster;
 use app\modules\student\models\StuMasterSearch;
-use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -118,7 +117,7 @@ class StuMasterController extends Controller
 
                 $msg = 'Student saved. Registration no: ' . $info->stu_unique_id . '.';
                 if ($tempPassword !== null) {
-                    $msg .= ' Temporary password: ' . $tempPassword . ' (shown only once).';
+                    $msg .= ' Login ID and initial password: ' . $info->stu_unique_id . ' (change it after first login).';
                 }
                 Yii::$app->session->setFlash('success', $msg);
                 return $this->redirect(['view', 'id' => $master->stu_master_id]);
@@ -275,39 +274,40 @@ class StuMasterController extends Controller
      * Creates a login in the host app's user table and assigns the role.
      * Only runs when the module option createLogin is true.
      *
-     * @return array [user id, temporary password]
+     * @return array [user id, initial password]
      */
     protected function createLoginAccount(StuInfo $info)
     {
-        $userClass = '\app\models\User';
-        $authClass = '\app\models\AuthAssignment';
-        if (!class_exists($userClass) || !class_exists($authClass)) {
-            throw new \RuntimeException('createLogin is on, but app\models\User or app\models\AuthAssignment was not found.');
+        if (empty($info->stu_unique_id)) {
+            throw new \RuntimeException('A registration number is required to create the student login.');
         }
 
-        $password = Yii::$app->security->generateRandomString(10);
+        $password = $info->stu_unique_id;
         $hasher = $this->module->passwordHasher;
         $hash = $hasher ? call_user_func($hasher, $password) : Yii::$app->security->generatePasswordHash($password);
 
-        $user = new $userClass();
-        $user->user_login_id = $info->stu_unique_id;
-        $user->user_password = $hash;
-        $user->user_type = 'S';
-        $user->created_by = Yii::$app->user->id;
-        $user->created_at = new Expression('NOW()');
+        $user = new \app\models\User();
+        $user->username = $info->stu_unique_id;
+        $user->email = $info->stu_email_id ?: '';
+        $user->auth_key = Yii::$app->security->generateRandomString();
+        $user->password_hash = $hash;
+        $user->status = 10;
+        $user->created_at = time();
+        $user->updated_at = time();
         if (!$user->save(false)) {
             throw new \RuntimeException('Could not create the login user.');
         }
 
-        $auth = new $authClass();
-        $auth->item_name = $this->module->loginRole;
-        $auth->user_id = $user->user_id;
-        $auth->created_at = time();
-        if (!$auth->save(false)) {
-            throw new \RuntimeException('Could not assign the login role.');
+        $authManager = Yii::$app->authManager;
+        $role = $authManager->getRole($this->module->loginRole);
+        if ($role === null) {
+            $role = $authManager->createRole($this->module->loginRole);
+            $role->description = 'Student login account';
+            $authManager->add($role);
         }
+        $authManager->assign($role, $user->id);
 
-        return [$user->user_id, $password];
+        return [$user->id, $password];
     }
 
     protected function findModel($id)

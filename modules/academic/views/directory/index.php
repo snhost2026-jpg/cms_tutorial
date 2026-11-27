@@ -28,4 +28,13 @@ $this->title = 'Academic Management';
             </div>
         </div>
     <?php endforeach; ?>
+    <div class="col-sm-6 col-xl-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3">Attendance</h5>
+                <p class="text-muted">Record attendance by section, subject, and date.</p>
+                <?= Html::a('Take Attendance', ['/academic/attendance/index'], ['class' => 'btn btn-primary']) ?>
+            </div>
+        </div>
+    </div>
 </div>

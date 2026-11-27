@@ -33,9 +33,9 @@ class StudentModule extends \yii\base\Module
     public $pageSize = 20;
 
     /**
-     * When true, saving a new student also creates a row in app\models\User
-     * and an app\models\AuthAssignment (the host application must provide
-     * both classes). Off by default so the module works on its own.
+     * When true, saving a new student also creates an app\models\User login
+     * and assigns the configured RBAC role. Off by default so the module
+     * works on its own.
      */
     public $createLogin = false;
 

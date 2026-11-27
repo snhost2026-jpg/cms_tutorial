@@ -562,6 +562,9 @@ body.crm-body {
                         <a class="nav-link <?= $currentAcademicEntity === 'sections' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'sections']) ?>">
                             <i class="fa-solid fa-list"></i> Sections
                         </a>
+                        <a class="nav-link <?= isMenuActive(['/academic/attendance/index']) ?>" href="<?= Url::to(['/academic/attendance/index']) ?>">
+                            <i class="fa-solid fa-clipboard-check"></i> Attendance
+                        </a>
                     </div>
                 </div>
             <?php endif; ?>
