@@ -294,7 +294,6 @@ CREATE TABLE `stu_master` (
   `stu_master_course_id` INT UNSIGNED DEFAULT NULL,
   `stu_master_batch_id` INT UNSIGNED DEFAULT NULL,
   `stu_master_section_id` INT UNSIGNED DEFAULT NULL,
-  `stu_master_branch_id` INT UNSIGNED DEFAULT NULL,
   `created_at` DATETIME DEFAULT NULL,
   `created_by` INT UNSIGNED DEFAULT NULL,
   `updated_at` DATETIME DEFAULT NULL,
@@ -306,7 +305,6 @@ CREATE TABLE `stu_master` (
   KEY `idx_stu_master_course` (`stu_master_course_id`),
   KEY `idx_stu_master_batch` (`stu_master_batch_id`),
   KEY `idx_stu_master_section` (`stu_master_section_id`),
-  KEY `idx_stu_master_branch` (`stu_master_branch_id`),
   KEY `idx_stu_master_status` (`is_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

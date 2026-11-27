@@ -80,7 +80,6 @@ $config = [
                     }
                     return [];
                 },
-                'branch' => [],
             ],
         ],
     ],

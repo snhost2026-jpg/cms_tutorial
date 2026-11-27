@@ -97,7 +97,6 @@ $sections = [
                         ['label' => 'Course / Class', 'value' => $label('course', $master->stu_master_course_id)],
                         ['label' => 'Batch / Year', 'value' => $label('batch', $master->stu_master_batch_id)],
                         ['label' => 'Section', 'value' => $label('section', $master->stu_master_section_id)],
-                        ['label' => 'Branch / Wing', 'value' => $label('branch', $master->stu_master_branch_id)],
                         ['label' => 'Status', 'value' => $master->statusLabel],
                         'stu_master_user_id',
                         'created_at:datetime',

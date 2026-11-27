@@ -73,7 +73,6 @@ class m261127_000001_create_student_tables extends Migration
                 'stu_master_course_id' => $this->integer()->unsigned(),
                 'stu_master_batch_id' => $this->integer()->unsigned(),
                 'stu_master_section_id' => $this->integer()->unsigned(),
-                'stu_master_branch_id' => $this->integer()->unsigned(),
                 'created_at' => $this->dateTime(),
                 'created_by' => $this->integer()->unsigned(),
                 'updated_at' => $this->dateTime(),
@@ -86,7 +85,6 @@ class m261127_000001_create_student_tables extends Migration
             $this->createIndex('idx_stu_master_course', 'stu_master', 'stu_master_course_id');
             $this->createIndex('idx_stu_master_batch', 'stu_master', 'stu_master_batch_id');
             $this->createIndex('idx_stu_master_section', 'stu_master', 'stu_master_section_id');
-            $this->createIndex('idx_stu_master_branch', 'stu_master', 'stu_master_branch_id');
             $this->createIndex('idx_stu_master_status', 'stu_master', 'is_status');
         }
     }

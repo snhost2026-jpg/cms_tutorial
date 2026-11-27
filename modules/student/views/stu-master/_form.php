@@ -23,12 +23,12 @@ $select = function ($model, $attr, $items, $size = 4) use ($form) {
         . $form->field($model, $attr)->dropDownList($items, ['prompt' => '— Select —', 'class' => 'form-select'])
         . '</div>';
 };
-$classField = function ($attr, $key) use ($form, $master, $lists) {
+$classField = function ($attr, $key, $size = 4) use ($form, $master, $lists) {
     $field = $form->field($master, $attr);
     $html = !empty($lists[$key])
         ? $field->dropDownList($lists[$key], ['prompt' => '— Select —', 'class' => 'form-select'])
         : $field->input('number', ['min' => 0, 'class' => 'form-control']);
-    return '<div class="col-md-3">' . $html . '</div>';
+    return '<div class="col-md-' . $size . '">' . $html . '</div>';
 };
 ?>
 
@@ -78,10 +78,9 @@ $classField = function ($attr, $key) use ($form, $master, $lists) {
     </div>
     <div class="card-body p-4">
         <div class="row g-3">
-            <?= $classField('stu_master_course_id', 'course') ?>
-            <?= $classField('stu_master_batch_id', 'batch') ?>
-            <?= $classField('stu_master_section_id', 'section') ?>
-            <?= $classField('stu_master_branch_id', 'branch') ?>
+            <?= $classField('stu_master_course_id', 'course', 4) ?>
+            <?= $classField('stu_master_batch_id', 'batch', 4) ?>
+            <?= $classField('stu_master_section_id', 'section', 4) ?>
         </div>
     </div>
 </div>

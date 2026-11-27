@@ -52,7 +52,7 @@ class StudentModule extends \yii\base\Module
     /**
      * Optional dropdown data for the class-placement fields. Each value is an
      * array [id => label] or a callable returning one. Keys: course, batch,
-     * section, branch. Without an entry the field is a plain number input.
+     * section. Without an entry the field is a plain number input.
      *
      *   'classLists' => [
      *       'course' => function () {
