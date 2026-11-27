@@ -134,7 +134,9 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `created_at`, `updated_a
 ('/auth-assignment/*', 2, 'Role and route assignment routes', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
 ('/site/*', 2, 'Public and common site routes', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
 ('manageRbac', 2, 'Manage RBAC and user assignments capability', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-('viewOwnProfile', 2, 'View own profile capability', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+('viewOwnProfile', 2, 'View own profile capability', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('/academic/*', 2, 'Academic module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('/student/*', 2, 'Student module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 -- Assign wildcard and permissions to SuperAdmin and admin
 INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
@@ -144,6 +146,8 @@ INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
 ('admin', 'manageRbac'),
 ('manager', '/rights/*'),
 ('manager', '/users/*'),
+('manager', '/academic/*'),
+('manager', '/student/*'),
 ('manager', 'manageRbac'),
 ('employee', '/site/*'),
 ('employee', 'viewOwnProfile');
@@ -159,5 +163,151 @@ INSERT INTO `user` (`id`, `username`, `auth_key`, `password_hash`, `email`, `sta
 INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
 ('SuperAdmin', '1', UNIX_TIMESTAMP()),
 ('admin', '1', UNIX_TIMESTAMP());
+
+-- ------------------------------------------------------------------------------
+-- Table structure for Academic Module: courses, subjects, batches, sections
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `sections`;
+DROP TABLE IF EXISTS `batches`;
+DROP TABLE IF EXISTS `subjects`;
+DROP TABLE IF EXISTS `courses`;
+
+CREATE TABLE `courses` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(150) DEFAULT NULL,
+  `code` VARCHAR(50) DEFAULT NULL,
+  `description` TEXT,
+  `fee_amount` DECIMAL(12,2) DEFAULT NULL,
+  `active` TINYINT(1) DEFAULT 1,
+  `created_by` INT DEFAULT NULL,
+  `created_at` INT NOT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `updated_at` INT NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `subjects` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `course_id` INT DEFAULT NULL,
+  `name` VARCHAR(160) DEFAULT NULL,
+  `code` VARCHAR(50) DEFAULT NULL,
+  `created_by` INT DEFAULT NULL,
+  `created_at` INT NOT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `updated_at` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx-subjects-course_id` (`course_id`),
+  CONSTRAINT `fk-subjects-course_id` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `batches` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `course_id` INT DEFAULT NULL,
+  `name` VARCHAR(150) DEFAULT NULL,
+  `start_date` DATE DEFAULT NULL,
+  `end_date` DATE DEFAULT NULL,
+  `capacity` INT DEFAULT NULL,
+  `created_by` INT DEFAULT NULL,
+  `created_at` INT NOT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `updated_at` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx-batches-course_id` (`course_id`),
+  CONSTRAINT `fk-batches-course_id` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `sections` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `course_id` INT DEFAULT NULL,
+  `batch_id` INT DEFAULT NULL,
+  `name` VARCHAR(70) DEFAULT NULL,
+  `created_by` INT DEFAULT NULL,
+  `created_at` INT NOT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `updated_at` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx-sections-course_id` (`course_id`),
+  KEY `idx-sections-batch_id` (`batch_id`),
+  CONSTRAINT `fk-sections-course_id` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk-sections-batch_id` FOREIGN KEY (`batch_id`) REFERENCES `batches` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- Table structure for Student Module: stu_info, stu_master
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `stu_master`;
+DROP TABLE IF EXISTS `stu_info`;
+
+CREATE TABLE `stu_info` (
+  `stu_info_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stu_unique_id` VARCHAR(30) DEFAULT NULL,
+  `stu_info_stu_master_id` INT UNSIGNED DEFAULT NULL,
+  `application_no` VARCHAR(50) DEFAULT NULL,
+  `stu_title` VARCHAR(15) DEFAULT NULL,
+  `stu_first_name` VARCHAR(150) DEFAULT NULL,
+  `stu_middle_name` VARCHAR(150) DEFAULT NULL,
+  `stu_last_name` VARCHAR(150) DEFAULT NULL,
+  `stu_gender` VARCHAR(20) DEFAULT NULL,
+  `stu_dob` DATE DEFAULT NULL,
+  `stu_birthplace` VARCHAR(100) DEFAULT NULL,
+  `stu_religion` VARCHAR(50) DEFAULT NULL,
+  `stu_aadhaar` VARCHAR(12) DEFAULT NULL,
+  `stu_mobile_no` VARCHAR(15) DEFAULT NULL,
+  `stu_whatsapp_no` VARCHAR(15) DEFAULT NULL,
+  `stu_email_id` VARCHAR(150) DEFAULT NULL,
+  `stu_admission_date` DATE DEFAULT NULL,
+  `father_name` VARCHAR(100) DEFAULT NULL,
+  `father_mobile` VARCHAR(15) DEFAULT NULL,
+  `father_whatsapp` VARCHAR(15) DEFAULT NULL,
+  `father_email` VARCHAR(150) DEFAULT NULL,
+  `father_occupation` VARCHAR(100) DEFAULT NULL,
+  `mother_name` VARCHAR(100) DEFAULT NULL,
+  `mother_mobile` VARCHAR(15) DEFAULT NULL,
+  `mother_whatsapp` VARCHAR(15) DEFAULT NULL,
+  `mother_email` VARCHAR(150) DEFAULT NULL,
+  `mother_occupation` VARCHAR(100) DEFAULT NULL,
+  `guardian_name` VARCHAR(100) DEFAULT NULL,
+  `guardian_relation` VARCHAR(30) DEFAULT NULL,
+  `guardian_mobile` VARCHAR(15) DEFAULT NULL,
+  `address_line` VARCHAR(255) DEFAULT NULL,
+  `city` VARCHAR(80) DEFAULT NULL,
+  `state` VARCHAR(80) DEFAULT NULL,
+  `pincode` VARCHAR(10) DEFAULT NULL,
+  `prev_school_name` VARCHAR(150) DEFAULT NULL,
+  `prev_class` VARCHAR(30) DEFAULT NULL,
+  `emergency_contact_name` VARCHAR(100) DEFAULT NULL,
+  `emergency_contact_phone` VARCHAR(15) DEFAULT NULL,
+  PRIMARY KEY (`stu_info_id`),
+  UNIQUE KEY `uq_stu_info_unique_id` (`stu_unique_id`),
+  UNIQUE KEY `uq_stu_info_aadhaar` (`stu_aadhaar`),
+  UNIQUE KEY `uq_stu_info_email` (`stu_email_id`),
+  KEY `idx_stu_info_master` (`stu_info_stu_master_id`),
+  KEY `idx_stu_info_name` (`stu_first_name`, `stu_last_name`),
+  KEY `idx_stu_info_mobile` (`stu_mobile_no`),
+  KEY `idx_stu_info_dob` (`stu_dob`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `stu_master` (
+  `stu_master_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `stu_master_stu_info_id` INT UNSIGNED DEFAULT NULL,
+  `stu_master_user_id` INT UNSIGNED DEFAULT NULL,
+  `stu_master_course_id` INT UNSIGNED DEFAULT NULL,
+  `stu_master_batch_id` INT UNSIGNED DEFAULT NULL,
+  `stu_master_section_id` INT UNSIGNED DEFAULT NULL,
+  `stu_master_branch_id` INT UNSIGNED DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+  `created_by` INT UNSIGNED DEFAULT NULL,
+  `updated_at` DATETIME DEFAULT NULL,
+  `updated_by` INT UNSIGNED DEFAULT NULL,
+  `is_status` SMALLINT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`stu_master_id`),
+  KEY `idx_stu_master_info` (`stu_master_stu_info_id`),
+  KEY `idx_stu_master_user` (`stu_master_user_id`),
+  KEY `idx_stu_master_course` (`stu_master_course_id`),
+  KEY `idx_stu_master_batch` (`stu_master_batch_id`),
+  KEY `idx_stu_master_section` (`stu_master_section_id`),
+  KEY `idx_stu_master_branch` (`stu_master_branch_id`),
+  KEY `idx_stu_master_status` (`is_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

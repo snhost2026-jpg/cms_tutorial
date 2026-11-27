@@ -58,6 +58,16 @@ $canAccessAcademic = !Yii::$app->user->isGuest && (
     canAccessRoute('/academic/*') ||
     canAccessRoute('/academic/directory/index')
 );
+
+$canAccessStudent = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageStudent') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/student/*') ||
+    canAccessRoute('/student/stu-master/index') ||
+    canAccessRoute('/student')
+);
 ?>
 
 <style>
@@ -551,6 +561,35 @@ body.crm-body {
                         </a>
                         <a class="nav-link <?= $currentAcademicEntity === 'sections' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'sections']) ?>">
                             <i class="fa-solid fa-list"></i> Sections
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($canAccessStudent): ?>
+                <?php
+                $isStudentActive = strpos($currentRoute, 'student/') === 0;
+                ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isStudentActive ? 'active' : '' ?>" href="<?= Url::to(['/student/stu-master/index']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-user-graduate"></i> Student Management
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isStudentActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#studentSubmenu"
+                                aria-expanded="<?= $isStudentActive ? 'true' : 'false' ?>" aria-label="Toggle Student submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isStudentActive ? 'show' : '' ?> crm-submenu" id="studentSubmenu">
+                        <a class="nav-link <?= isMenuActive(['/student/stu-master/index', '/student/stu-master/view', '/student/stu-master/update']) ?>" href="<?= Url::to(['/student/stu-master/index']) ?>">
+                            <i class="fa-solid fa-users"></i> All Students
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/student/stu-master/create']) ?>" href="<?= Url::to(['/student/stu-master/create']) ?>">
+                            <i class="fa-solid fa-user-plus"></i> Add Student
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/student/stu-master/trash']) ?>" href="<?= Url::to(['/student/stu-master/trash']) ?>">
+                            <i class="fa-solid fa-trash-can"></i> Trash / Deleted
                         </a>
                     </div>
                 </div>

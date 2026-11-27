@@ -53,6 +53,36 @@ $config = [
         'academic' => [
             'class' => 'app\modules\academic\Module',
         ],
+        'student' => [
+            'class' => 'app\modules\student\StudentModule',
+            'classLists' => [
+                'course' => function () {
+                    if (class_exists(\app\modules\academic\models\Course::class)) {
+                        try {
+                            return \yii\helpers\ArrayHelper::map(\app\modules\academic\models\Course::find()->all(), 'id', 'name');
+                        } catch (\Throwable $e) {}
+                    }
+                    return [];
+                },
+                'batch' => function () {
+                    if (class_exists(\app\modules\academic\models\Batch::class)) {
+                        try {
+                            return \yii\helpers\ArrayHelper::map(\app\modules\academic\models\Batch::find()->all(), 'id', 'name');
+                        } catch (\Throwable $e) {}
+                    }
+                    return [];
+                },
+                'section' => function () {
+                    if (class_exists(\app\modules\academic\models\Section::class)) {
+                        try {
+                            return \yii\helpers\ArrayHelper::map(\app\modules\academic\models\Section::find()->all(), 'id', 'name');
+                        } catch (\Throwable $e) {}
+                    }
+                    return [];
+                },
+                'branch' => [],
+            ],
+        ],
     ],
     'components' => [
         'request' => [
@@ -114,6 +144,8 @@ $config = [
                 'rights' => 'rights/assignment/index',
                 'user/<action:[\w\-]+>' => 'users/user/<action>',
                 'user' => 'users/user/index',
+                'student/<action:[\w\-]+>' => 'student/stu-master/<action>',
+                'student' => 'student/stu-master/index',
                 'auth-assignment/<action:[\w\-]+>' => 'users/auth-assignment/<action>',
                 'auth-assignment' => 'users/auth-assignment/index',
                 '' => 'site/login',

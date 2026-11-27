@@ -30,19 +30,57 @@ $this->params['breadcrumbs'] = [];
 
     <!-- Quick Access Dashboard Cards -->
     <div class="row g-4 mb-4">
-        <!-- Users Card -->
-        <div class="col-md-6 col-xl-3">
+        <!-- Student Management Card -->
+        <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <div style="width: 48px; height: 48px; background: rgba(13, 110, 253, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-users text-primary fs-5"></i>
+                            <i class="fa-solid fa-user-graduate text-primary fs-5"></i>
                         </div>
-                        <span class="badge bg-primary-subtle text-primary">Manage</span>
+                        <span class="badge bg-primary-subtle text-primary">Students</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">Student Management</h5>
+                    <p class="text-muted small mb-3">Manage admissions, student info, class placements, and trash.</p>
+                    <a href="<?= Url::to(['/student/stu-master/index']) ?>" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                        View Students <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Academic Management Card -->
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div style="width: 48px; height: 48px; background: rgba(25, 135, 84, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-graduation-cap text-success fs-5"></i>
+                        </div>
+                        <span class="badge bg-success-subtle text-success">Academic</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">Academic Structure</h5>
+                    <p class="text-muted small mb-3">Configure courses, subjects, academic batches, and sections.</p>
+                    <a href="<?= Url::to(['/academic']) ?>" class="btn btn-outline-success btn-sm rounded-pill w-100">
+                        View Academics <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Card -->
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div style="width: 48px; height: 48px; background: rgba(111, 66, 193, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-users text-purple fs-5" style="color: #6f42c1;"></i>
+                        </div>
+                        <span class="badge bg-light text-dark">Staff & Users</span>
                     </div>
                     <h5 class="fw-bold mb-1">User Management</h5>
                     <p class="text-muted small mb-3">Create users, manage credentials, and view login activity.</p>
-                    <a href="<?= Url::to(['/users/user/index']) ?>" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                    <a href="<?= Url::to(['/users/user/index']) ?>" class="btn btn-outline-secondary btn-sm rounded-pill w-100">
                         View Users <i class="fa-solid fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -50,18 +88,18 @@ $this->params['breadcrumbs'] = [];
         </div>
 
         <!-- Role Assignments Card -->
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div style="width: 48px; height: 48px; background: rgba(25, 135, 84, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-user-shield text-success fs-5"></i>
+                        <div style="width: 48px; height: 48px; background: rgba(255, 193, 7, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-user-shield text-warning fs-5"></i>
                         </div>
-                        <span class="badge bg-success-subtle text-success">RBAC</span>
+                        <span class="badge bg-warning-subtle text-warning">RBAC</span>
                     </div>
                     <h5 class="fw-bold mb-1">Role Assignments</h5>
                     <p class="text-muted small mb-3">Assign roles and route permissions to users via dual listbox.</p>
-                    <a href="<?= Url::to(['/rights/assignment']) ?>" class="btn btn-outline-success btn-sm rounded-pill w-100">
+                    <a href="<?= Url::to(['/rights/assignment']) ?>" class="btn btn-outline-warning btn-sm rounded-pill w-100">
                         Manage Rights <i class="fa-solid fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -69,18 +107,18 @@ $this->params['breadcrumbs'] = [];
         </div>
 
         <!-- Roles & Permissions Card -->
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
-                        <div style="width: 48px; height: 48px; background: rgba(255, 193, 7, 0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
-                            <i class="fa-solid fa-shield-halved text-warning fs-5"></i>
+                        <div style="width: 48px; height: 48px; background: rgba(220, 53, 69, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-shield-halved text-danger fs-5"></i>
                         </div>
-                        <span class="badge bg-warning-subtle text-warning">Security</span>
+                        <span class="badge bg-danger-subtle text-danger">Security</span>
                     </div>
                     <h5 class="fw-bold mb-1">Roles & Permissions</h5>
                     <p class="text-muted small mb-3">Define granular roles, permissions, and rule trees.</p>
-                    <a href="<?= Url::to(['/rights/role']) ?>" class="btn btn-outline-warning btn-sm rounded-pill w-100">
+                    <a href="<?= Url::to(['/rights/role']) ?>" class="btn btn-outline-danger btn-sm rounded-pill w-100">
                         View Roles <i class="fa-solid fa-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -88,7 +126,7 @@ $this->params['breadcrumbs'] = [];
         </div>
 
         <!-- Route Access Card -->
-        <div class="col-md-6 col-xl-3">
+        <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
                 <div class="card-body p-4">
                     <div class="d-flex align-items-center justify-content-between mb-3">
