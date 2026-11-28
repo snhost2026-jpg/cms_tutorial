@@ -81,6 +81,18 @@ $sections = [
         </div>
     <?php endforeach; ?>
 
+    <?php if (!empty($info->Profile_image)): ?>
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-4 d-flex align-items-center gap-3">
+                <?= Html::img($info->Profile_image, ['alt' => 'Student profile', 'style' => 'width:120px;height:120px;object-fit:cover;border-radius:12px;border:1px solid #dee2e6']) ?>
+                <div>
+                    <div class="text-muted small">Profile Image</div>
+                    <div class="fw-semibold"><?= Html::encode($info->fullName) ?></div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Class Placement & System Record Card -->
     <div class="card border-0 shadow-sm rounded-4 mb-4 overflow-hidden">
         <div class="card-header bg-white border-bottom py-3 px-4">

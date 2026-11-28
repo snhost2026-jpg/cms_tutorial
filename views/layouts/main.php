@@ -68,7 +68,19 @@ $canAccessAttendance = !Yii::$app->user->isGuest && (
     Yii::$app->user->can('manageStudent') ||
     Yii::$app->user->can('manageRbac') ||
     canAccessRoute('/academic/attendance/*') ||
+    canAccessRoute('/academic/subject-assign/*') ||
     canAccessRoute('/attendance')
+);
+
+$canAccessTimetable = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageTimetable') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/timetable/*') ||
+    canAccessRoute('/timetable/timetable/index') ||
+    canAccessRoute('/timetable')
 );
 
 $canAccessEmployee = !Yii::$app->user->isGuest && (
@@ -588,7 +600,7 @@ body.crm-body {
             <?php endif; ?>
 
             <?php if ($canAccessAttendance): ?>
-                <?php $isAttendanceActive = strpos($currentRoute, 'academic/attendance/') === 0; ?>
+                <?php $isAttendanceActive = strpos($currentRoute, 'academic/attendance/') === 0 || strpos($currentRoute, 'academic/subject-assign/') === 0; ?>
                 <div class="nav-item crm-menu-dropdown">
                     <div class="d-flex align-items-center position-relative">
                         <a class="nav-link flex-grow-1 <?= $isAttendanceActive ? 'active' : '' ?>" href="<?= Url::to(['/academic/attendance/index']) ?>" style="padding-right: 38px;">
@@ -606,6 +618,39 @@ body.crm-body {
                         </a>
                         <a class="nav-link <?= isMenuActive(['/academic/attendance/history', '/academic/attendance/view']) ?>" href="<?= Url::to(['/academic/attendance/history']) ?>">
                             <i class="fa-solid fa-clock-rotate-left"></i> Attendance History
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/academic/subject-assign/index']) ?>" href="<?= Url::to(['/academic/subject-assign/index']) ?>">
+                            <i class="fa-solid fa-user-check"></i> Subject Assign Teacher
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($canAccessTimetable): ?>
+                <?php $isTimetableActive = strpos($currentRoute, 'timetable/') === 0; ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isTimetableActive ? 'active' : '' ?>" href="<?= Url::to(['/timetable/timetable/index']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-calendar-days"></i> Timetable
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isTimetableActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#timetableSubmenu"
+                                aria-expanded="<?= $isTimetableActive ? 'true' : 'false' ?>" aria-label="Toggle Timetable submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isTimetableActive ? 'show' : '' ?> crm-submenu" id="timetableSubmenu">
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/index']) ?>" href="<?= Url::to(['/timetable/timetable/index']) ?>">
+                            <i class="fa-solid fa-table-cells"></i> Weekly Timetable
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/builder']) ?>" href="<?= Url::to(['/timetable/timetable/builder']) ?>">
+                            <i class="fa-solid fa-calendar-week"></i> Weekly Builder
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/create']) ?>" href="<?= Url::to(['/timetable/timetable/create']) ?>">
+                            <i class="fa-solid fa-plus"></i> Add Class Slot
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/list', '/timetable/timetable/update', '/timetable/timetable/view']) ?>" href="<?= Url::to(['/timetable/timetable/list']) ?>">
+                            <i class="fa-solid fa-table-list"></i> All Slots
                         </a>
                     </div>
                 </div>

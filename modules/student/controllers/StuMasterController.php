@@ -10,6 +10,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
  * CRUD for students: list, view, create, update, soft delete, trash/restore
@@ -75,6 +76,7 @@ class StuMasterController extends Controller
         $request = Yii::$app->request;
 
         if ($master->load($request->post()) && $info->load($request->post())) {
+            $info->profileImageFile = UploadedFile::getInstance($info, 'profileImageFile');
             $valid = $info->validate();
             $valid = $master->validate() && $valid;
 
@@ -104,6 +106,10 @@ class StuMasterController extends Controller
                         'stu_info_stu_master_id' => $master->stu_master_id,
                         'stu_unique_id' => $info->stu_unique_id,
                     ]);
+                    $this->saveProfileImage($info, $master->stu_master_id);
+                    if ($info->Profile_image) {
+                        $info->updateAttributes(['Profile_image' => $info->Profile_image]);
+                    }
 
                     $tx->commit();
                 } catch (\Throwable $e) {
@@ -142,6 +148,7 @@ class StuMasterController extends Controller
         $request = Yii::$app->request;
 
         if ($master->load($request->post()) && $info->load($request->post())) {
+            $info->profileImageFile = UploadedFile::getInstance($info, 'profileImageFile');
             $valid = $info->validate();
             $valid = $master->validate() && $valid;
 
@@ -155,6 +162,10 @@ class StuMasterController extends Controller
                     $master->save(false);
                     if ($isNewInfo || $info->stu_info_stu_master_id != $master->stu_master_id) {
                         $info->updateAttributes(['stu_info_stu_master_id' => $master->stu_master_id]);
+                    }
+                    $this->saveProfileImage($info, $master->stu_master_id);
+                    if ($info->Profile_image) {
+                        $info->updateAttributes(['Profile_image' => $info->Profile_image]);
                     }
                     $tx->commit();
                 } catch (\Throwable $e) {
@@ -308,6 +319,42 @@ class StuMasterController extends Controller
         $authManager->assign($role, $user->id);
 
         return [$user->id, $password];
+    }
+
+    protected function saveProfileImage(StuInfo $info, $studentMasterId)
+    {
+        if ($info->profileImageFile === null) {
+            return;
+        }
+
+        $directory = Yii::getAlias('@webroot/uploads/students');
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            throw new \RuntimeException('Could not create the student image directory.');
+        }
+
+        $extension = strtolower($info->profileImageFile->extension);
+        $filename = 'student_' . (int) $studentMasterId . '.' . $extension;
+        $absolutePath = $directory . DIRECTORY_SEPARATOR . $filename;
+
+        foreach (glob($directory . DIRECTORY_SEPARATOR . 'student_' . (int) $studentMasterId . '.*') as $existingFile) {
+            if (is_file($existingFile)) {
+                @unlink($existingFile);
+            }
+        }
+
+        if (!$info->profileImageFile->saveAs($absolutePath)) {
+            throw new \RuntimeException('Could not save the profile image.');
+        }
+
+        $oldPath = $info->Profile_image;
+        $info->Profile_image = '/uploads/students/' . $filename;
+
+        if ($oldPath && strpos($oldPath, '/uploads/students/') === 0) {
+            $oldAbsolutePath = Yii::getAlias('@webroot') . str_replace('/', DIRECTORY_SEPARATOR, $oldPath);
+            if ($oldAbsolutePath !== $absolutePath && is_file($oldAbsolutePath)) {
+                @unlink($oldAbsolutePath);
+            }
+        }
     }
 
     protected function findModel($id)

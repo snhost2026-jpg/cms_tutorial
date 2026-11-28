@@ -155,6 +155,8 @@ class Helper
             'manageChat' => ['/chat/*'],
             'manageCertificate' => ['/certificate/*'],
             'manageEmployee' => ['/employee/*'],
+            'manageTimetable' => ['/timetable/*'],
+            'manageAcademic' => ['/academic/*', '/timetable/*'],
             'viewAllEmployee' => ['/employee/index', '/employee/view'],
             'viewOwnProfile' => ['/employee/my-profile'],
             'manageJoining' => ['/joining/*'],

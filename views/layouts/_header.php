@@ -33,7 +33,18 @@ $canAccessAttendance = !Yii::$app->user->isGuest && (
     Yii::$app->user->can('manageAcademic') ||
     Yii::$app->user->can('manageStudent') ||
     Yii::$app->user->can('manageRbac') ||
-    \app\components\AccessHelper::checkRoute('/academic/attendance/*')
+    \app\components\AccessHelper::checkRoute('/academic/attendance/*') ||
+    \app\components\AccessHelper::checkRoute('/academic/subject-assign/*')
+);
+
+$canAccessTimetable = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageTimetable') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    \app\components\AccessHelper::checkRoute('/timetable/*') ||
+    \app\components\AccessHelper::checkRoute('/timetable')
 );
 
 $canAccessEmployee = !Yii::$app->user->isGuest && (
@@ -59,6 +70,11 @@ $items = [
         'label' => 'Academic',
         'url' => ['/academic/attendance/index'],
         'visible' => $canAccessAttendance,
+    ],
+    [
+        'label' => 'Timetable',
+        'url' => ['/timetable/timetable/index'],
+        'visible' => $canAccessTimetable,
     ],
     [
         'label' => 'Employees',

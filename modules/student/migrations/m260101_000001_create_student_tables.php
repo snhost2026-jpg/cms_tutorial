@@ -56,6 +56,7 @@ class m260101_000001_create_student_tables extends Migration
             'prev_class' => $this->string(30),
             'emergency_contact_name' => $this->string(100),
             'emergency_contact_phone' => $this->string(15),
+            'Profile_image' => $this->string(255),
         ], $options);
 
         $this->createIndex('uq_stu_info_unique_id', 'stu_info', 'stu_unique_id', true);

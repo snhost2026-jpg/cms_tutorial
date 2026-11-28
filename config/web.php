@@ -53,6 +53,9 @@ $config = [
         'academic' => [
             'class' => 'app\modules\academic\Module',
         ],
+        'timetable' => [
+            'class' => 'app\modules\timetable\Module',
+        ],
         'course' => [
             'class' => 'app\modules\course\Module',
         ],
@@ -150,6 +153,10 @@ $config = [
                 'rights' => 'rights/assignment/index',
                 'academic/directory/<action:[\w\-]+>' => 'course/directory/<action>',
                 'academic/directory' => 'course/directory/index',
+                'academic/subject-assign/<action:[\w\-]+>' => 'academic/subject-assign/<action>',
+                'academic/subject-assign' => 'academic/subject-assign/index',
+                'timetable/<action:[\w\-]+>' => 'timetable/timetable/<action>',
+                'timetable' => 'timetable/timetable/index',
                 'course' => 'course/directory/index',
                 'employee/<action:[\w\-]+>' => 'employee/employee/<action>',
                 'employee' => 'employee/employee/index',
