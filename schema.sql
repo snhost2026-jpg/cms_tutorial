@@ -308,4 +308,76 @@ CREATE TABLE `stu_master` (
   KEY `idx_stu_master_status` (`is_status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ------------------------------------------------------------------------------
+-- Table structure for Employee Module: emp_info, emp_master
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `emp_master`;
+DROP TABLE IF EXISTS `emp_info`;
+
+CREATE TABLE `emp_info` (
+  `emp_info_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `emp_info_emp_master_id` INT UNSIGNED DEFAULT NULL,
+  `employee_code` VARCHAR(32) DEFAULT NULL,
+  `emp_application_no` VARCHAR(50) DEFAULT NULL,
+  `emp_title` VARCHAR(15) DEFAULT NULL,
+  `emp_first_name` VARCHAR(150) DEFAULT NULL,
+  `emp_middle_name` VARCHAR(150) DEFAULT NULL,
+  `emp_last_name` VARCHAR(150) DEFAULT NULL,
+  `emp_gender` VARCHAR(20) DEFAULT NULL,
+  `emp_dob` DATE DEFAULT NULL,
+  `emp_birthplace` VARCHAR(100) DEFAULT NULL,
+  `emp_religion` VARCHAR(50) DEFAULT NULL,
+  `emp_aadhaar` VARCHAR(12) DEFAULT NULL,
+  `emp_mobile_no` VARCHAR(30) DEFAULT NULL,
+  `emp_whatsapp_no` VARCHAR(15) DEFAULT NULL,
+  `emp_email_id` VARCHAR(150) DEFAULT NULL,
+  `emp_joining_date` DATE DEFAULT NULL,
+  `emp_father_name` VARCHAR(100) DEFAULT NULL,
+  `emp_father_mobile` VARCHAR(15) DEFAULT NULL,
+  `emp_father_whatsapp` VARCHAR(15) DEFAULT NULL,
+  `emp_father_email` VARCHAR(150) DEFAULT NULL,
+  `emp_father_occupation` VARCHAR(100) DEFAULT NULL,
+  `emp_mother_name` VARCHAR(100) DEFAULT NULL,
+  `emp_mother_mobile` VARCHAR(15) DEFAULT NULL,
+  `emp_mother_whatsapp` VARCHAR(15) DEFAULT NULL,
+  `emp_mother_email` VARCHAR(150) DEFAULT NULL,
+  `emp_mother_occupation` VARCHAR(100) DEFAULT NULL,
+  `emp_guardian_name` VARCHAR(100) DEFAULT NULL,
+  `emp_guardian_relation` VARCHAR(30) DEFAULT NULL,
+  `emp_guardian_mobile` VARCHAR(15) DEFAULT NULL,
+  `address_line` VARCHAR(255) DEFAULT NULL,
+  `city` VARCHAR(80) DEFAULT NULL,
+  `state` VARCHAR(80) DEFAULT NULL,
+  `pincode` VARCHAR(10) DEFAULT NULL,
+  `previous_employer_name` VARCHAR(150) DEFAULT NULL,
+  `previous_designation` VARCHAR(100) DEFAULT NULL,
+  `emergency_contact_name` VARCHAR(100) DEFAULT NULL,
+  `emergency_contact_phone` VARCHAR(15) DEFAULT NULL,
+  `employee_type` VARCHAR(20) NOT NULL,
+  `designation` VARCHAR(100) DEFAULT NULL,
+  `department` VARCHAR(100) DEFAULT NULL,
+  PRIMARY KEY (`emp_info_id`),
+  UNIQUE KEY `uq-emp-info-employee-code` (`employee_code`),
+  UNIQUE KEY `uq-emp-info-master` (`emp_info_emp_master_id`),
+  KEY `idx-emp-info-type` (`employee_type`),
+  KEY `idx-emp-info-name` (`emp_first_name`, `emp_last_name`),
+  KEY `idx-emp-info-mobile` (`emp_mobile_no`),
+  KEY `idx-emp-info-dob` (`emp_dob`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `emp_master` (
+  `emp_master_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `emp_master_emp_info_id` INT UNSIGNED DEFAULT NULL,
+  `emp_master_user_id` INT UNSIGNED DEFAULT NULL,
+  `created_at` INT NOT NULL,
+  `created_by` INT UNSIGNED DEFAULT NULL,
+  `updated_at` INT NOT NULL,
+  `updated_by` INT UNSIGNED DEFAULT NULL,
+  `is_status` SMALLINT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`emp_master_id`),
+  UNIQUE KEY `uq-emp-master-info` (`emp_master_emp_info_id`),
+  KEY `idx-emp-master-user` (`emp_master_user_id`),
+  KEY `idx-emp-master-status` (`is_status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;

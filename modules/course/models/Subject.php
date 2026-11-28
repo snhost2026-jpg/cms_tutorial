@@ -1,8 +1,8 @@
 <?php
 
-namespace app\modules\academic\models;
+namespace app\modules\course\models;
 
-class Subject extends AcademicRecord
+class Subject extends CourseRecord
 {
     public static function tableName()
     {

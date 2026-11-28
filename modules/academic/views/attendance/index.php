@@ -5,22 +5,25 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $sections array */
-/* @var $section app\modules\academic\models\Section|null */
+/* @var $section app\modules\course\models\Section|null */
 /* @var $subjects array */
-/* @var $subject app\modules\academic\models\Subject|null */
+/* @var $subject app\modules\course\models\Subject|null */
 /* @var $students app\modules\student\models\StuMaster[] */
 /* @var $attendanceByStudent array */
 /* @var $date string */
 
 $this->title = 'Take Attendance';
-$this->params['breadcrumbs'][] = ['label' => 'Academic Management', 'url' => ['/academic']];
+$this->params['breadcrumbs'][] = ['label' => 'Attendance', 'url' => ['/academic/attendance/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="attendance-page">
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1"><?= Html::encode($this->title) ?></h2>
-        <p class="text-muted mb-0">Choose a section, subject, and date to record student attendance.</p>
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1"><?= Html::encode($this->title) ?></h2>
+            <p class="text-muted mb-0">Choose a section, subject, and date to record student attendance.</p>
+        </div>
+        <?= Html::a('View attendance history', ['history'], ['class' => 'btn btn-outline-primary']) ?>
     </div>
 
     <?php foreach (Yii::$app->session->getAllFlashes() as $type => $message): ?>

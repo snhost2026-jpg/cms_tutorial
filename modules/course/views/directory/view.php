@@ -6,11 +6,11 @@ use yii\widgets\DetailView;
 /** @var yii\web\View $this */
 /** @var string $entity */
 /** @var array<string, mixed> $definition */
-/** @var \app\modules\academic\models\AcademicRecord $model */
+/** @var \app\modules\course\models\CourseRecord $model */
 
 $id = $model->getAttribute('id');
 $this->title = $definition['singular'] . ' #' . $id;
-$this->params['breadcrumbs'][] = ['label' => 'Academic Management', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Course Management', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $definition['label'], 'url' => ['records', 'entity' => $entity]];
 $this->params['breadcrumbs'][] = $this->title;
 

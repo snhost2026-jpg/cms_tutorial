@@ -6,12 +6,12 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var string $entity */
 /** @var array<string, mixed> $definition */
-/** @var \app\modules\academic\models\AcademicRecord $model */
+/** @var \app\modules\course\models\CourseRecord $model */
 /** @var array{options: array<string, array<int|string, string>>, optionAttributes: array<string, array<int|string, array<string, mixed>>>} $fieldOptions */
 
 $isNewRecord = $model->isNewRecord;
 $this->title = ($isNewRecord ? 'Add ' : 'Edit ') . $definition['singular'];
-$this->params['breadcrumbs'][] = ['label' => 'Academic Management', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Course Management', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $definition['label'], 'url' => ['records', 'entity' => $entity]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

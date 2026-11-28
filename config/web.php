@@ -53,30 +53,36 @@ $config = [
         'academic' => [
             'class' => 'app\modules\academic\Module',
         ],
+        'course' => [
+            'class' => 'app\modules\course\Module',
+        ],
+        'employee' => [
+            'class' => 'app\modules\employee\Module',
+        ],
         'student' => [
             'class' => 'app\modules\student\StudentModule',
             'createLogin' => true,
             'classLists' => [
                 'course' => function () {
-                    if (class_exists(\app\modules\academic\models\Course::class)) {
+                    if (class_exists(\app\modules\course\models\Course::class)) {
                         try {
-                            return \yii\helpers\ArrayHelper::map(\app\modules\academic\models\Course::find()->all(), 'id', 'name');
+                            return \yii\helpers\ArrayHelper::map(\app\modules\course\models\Course::find()->all(), 'id', 'name');
                         } catch (\Throwable $e) {}
                     }
                     return [];
                 },
                 'batch' => function () {
-                    if (class_exists(\app\modules\academic\models\Batch::class)) {
+                    if (class_exists(\app\modules\course\models\Batch::class)) {
                         try {
-                            return \yii\helpers\ArrayHelper::map(\app\modules\academic\models\Batch::find()->all(), 'id', 'name');
+                            return \yii\helpers\ArrayHelper::map(\app\modules\course\models\Batch::find()->all(), 'id', 'name');
                         } catch (\Throwable $e) {}
                     }
                     return [];
                 },
                 'section' => function () {
-                    if (class_exists(\app\modules\academic\models\Section::class)) {
+                    if (class_exists(\app\modules\course\models\Section::class)) {
                         try {
-                            return \yii\helpers\ArrayHelper::map(\app\modules\academic\models\Section::find()->all(), 'id', 'name');
+                            return \yii\helpers\ArrayHelper::map(\app\modules\course\models\Section::find()->all(), 'id', 'name');
                         } catch (\Throwable $e) {}
                     }
                     return [];
@@ -142,6 +148,11 @@ $config = [
                 'rights/<controller:[\w\-]+>/<action:[\w\-]+>' => 'rights/<controller>/<action>',
                 'rights/<controller:[\w\-]+>' => 'rights/<controller>/index',
                 'rights' => 'rights/assignment/index',
+                'academic/directory/<action:[\w\-]+>' => 'course/directory/<action>',
+                'academic/directory' => 'course/directory/index',
+                'course' => 'course/directory/index',
+                'employee/<action:[\w\-]+>' => 'employee/employee/<action>',
+                'employee' => 'employee/employee/index',
                 'attendance' => 'academic/attendance/index',
                 'user/<action:[\w\-]+>' => 'users/user/<action>',
                 'user' => 'users/user/index',

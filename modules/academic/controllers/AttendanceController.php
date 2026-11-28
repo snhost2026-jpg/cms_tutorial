@@ -4,11 +4,14 @@ namespace app\modules\academic\controllers;
 
 use Yii;
 use app\components\AccessHelper;
-use app\modules\academic\models\Section;
+use app\modules\course\models\Section;
 use app\modules\academic\models\StudentAttendance;
-use app\modules\academic\models\Subject;
+use app\modules\course\models\Subject;
 use app\modules\student\models\StuMaster;
+use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\db\Expression;
+use yii\db\Query;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -21,7 +24,7 @@ class AttendanceController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['index'],
+                'only' => ['index', 'history', 'view'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -191,6 +194,151 @@ class AttendanceController extends Controller
         ]);
     }
 
+    public function actionHistory()
+    {
+        $request = Yii::$app->request;
+        $sectionId = $this->parseId($request->get('section_id'), 'section');
+        $subjectId = $this->parseId($request->get('subject_id'), 'subject');
+        $dateFrom = $this->parseOptionalDate($request->get('date_from'), 'start');
+        $dateTo = $this->parseOptionalDate($request->get('date_to'), 'end');
+
+        if ($dateFrom !== null && $dateTo !== null && $dateFrom > $dateTo) {
+            throw new BadRequestHttpException('The start date must not be later than the end date.');
+        }
+
+        $section = null;
+        if ($sectionId !== null) {
+            $section = Section::findOne($sectionId);
+            if ($section === null) {
+                throw new NotFoundHttpException('The selected section does not exist.');
+            }
+        }
+
+        if ($subjectId !== null && Subject::findOne($subjectId) === null) {
+            throw new NotFoundHttpException('The selected subject does not exist.');
+        }
+
+        $sessionsQuery = (new Query())
+            ->select([
+                'section_id' => 'attendance.section_id',
+                'section_name' => 'section.name',
+                'subject_id' => 'attendance.subject_id',
+                'subject_name' => 'subject.name',
+                'attendance_date' => 'attendance.attendance_date',
+                'total_count' => new Expression('COUNT(*)'),
+                'present_count' => new Expression(
+                    'SUM(CASE WHEN attendance.status = :present THEN 1 ELSE 0 END)',
+                    [':present' => StudentAttendance::STATUS_PRESENT]
+                ),
+                'absent_count' => new Expression(
+                    'SUM(CASE WHEN attendance.status = :absent THEN 1 ELSE 0 END)',
+                    [':absent' => StudentAttendance::STATUS_ABSENT]
+                ),
+                'late_count' => new Expression(
+                    'SUM(CASE WHEN attendance.status = :late THEN 1 ELSE 0 END)',
+                    [':late' => StudentAttendance::STATUS_LATE]
+                ),
+                'excused_count' => new Expression(
+                    'SUM(CASE WHEN attendance.status = :excused THEN 1 ELSE 0 END)',
+                    [':excused' => StudentAttendance::STATUS_EXCUSED]
+                ),
+            ])
+            ->from(['attendance' => StudentAttendance::tableName()])
+            ->innerJoin(['section' => Section::tableName()], 'section.id = attendance.section_id')
+            ->innerJoin(['subject' => Subject::tableName()], 'subject.id = attendance.subject_id')
+            ->groupBy([
+                'attendance.section_id',
+                'section.name',
+                'attendance.subject_id',
+                'subject.name',
+                'attendance.attendance_date',
+            ]);
+
+        if ($sectionId !== null) {
+            $sessionsQuery->andWhere(['attendance.section_id' => $sectionId]);
+        }
+        if ($subjectId !== null) {
+            $sessionsQuery->andWhere(['attendance.subject_id' => $subjectId]);
+        }
+        if ($dateFrom !== null) {
+            $sessionsQuery->andWhere(['>=', 'attendance.attendance_date', $dateFrom]);
+        }
+        if ($dateTo !== null) {
+            $sessionsQuery->andWhere(['<=', 'attendance.attendance_date', $dateTo]);
+        }
+
+        $query = (new Query())
+            ->select('*')
+            ->from(['session_summary' => $sessionsQuery])
+            ->orderBy([
+                'attendance_date' => SORT_DESC,
+                'section_name' => SORT_ASC,
+                'subject_name' => SORT_ASC,
+            ]);
+
+        return $this->render('history', [
+            'dataProvider' => new ActiveDataProvider([
+                'query' => $query,
+                'pagination' => ['pageSize' => 25],
+                'sort' => false,
+            ]),
+            'sections' => $this->sectionOptions(),
+            'subjects' => $this->subjectOptions(),
+            'sectionId' => $sectionId,
+            'subjectId' => $subjectId,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+        ]);
+    }
+
+    public function actionView($section_id, $subject_id, $date)
+    {
+        $sectionId = $this->parseId($section_id, 'section');
+        $subjectId = $this->parseId($subject_id, 'subject');
+        if (!is_string($date) || !$this->isValidDate($date)) {
+            throw new BadRequestHttpException('Choose a valid attendance date.');
+        }
+
+        $section = Section::findOne($sectionId);
+        if ($section === null) {
+            throw new NotFoundHttpException('The selected section does not exist.');
+        }
+
+        $subject = Subject::find()
+            ->where(['id' => $subjectId, 'course_id' => $section->course_id])
+            ->one();
+        if ($subject === null) {
+            throw new NotFoundHttpException('The selected subject is not offered for this section.');
+        }
+
+        $records = (new Query())
+            ->select([
+                'registration_no' => 'info.stu_unique_id',
+                'first_name' => 'info.stu_first_name',
+                'middle_name' => 'info.stu_middle_name',
+                'last_name' => 'info.stu_last_name',
+                'status' => 'attendance.status',
+            ])
+            ->from(['attendance' => StudentAttendance::tableName()])
+            ->leftJoin(['student' => StuMaster::tableName()], 'student.stu_master_id = attendance.student_id')
+            ->leftJoin(['info' => \app\modules\student\models\StuInfo::tableName()], 'info.stu_info_id = student.stu_master_stu_info_id')
+            ->where([
+                'attendance.section_id' => $sectionId,
+                'attendance.subject_id' => $subjectId,
+                'attendance.attendance_date' => $date,
+            ])
+            ->orderBy(['info.stu_unique_id' => SORT_ASC, 'info.stu_first_name' => SORT_ASC])
+            ->all();
+
+        return $this->render('view', [
+            'section' => $section,
+            'subject' => $subject,
+            'sectionLabel' => $this->sectionOptions()[$section->id] ?? $section->name,
+            'date' => $date,
+            'records' => $records,
+        ]);
+    }
+
     private function sectionOptions()
     {
         $options = [];
@@ -212,17 +360,18 @@ class AttendanceController extends Controller
         return $options;
     }
 
-    private function subjectOptions(Section $section)
+    private function subjectOptions(?Section $section = null)
     {
-        if (empty($section->course_id)) {
+        if ($section !== null && empty($section->course_id)) {
             return [];
         }
 
         $options = [];
-        $records = Subject::find()
-            ->where(['course_id' => $section->course_id])
-            ->orderBy(['name' => SORT_ASC])
-            ->all();
+        $query = Subject::find();
+        if ($section !== null) {
+            $query->where(['course_id' => $section->course_id]);
+        }
+        $records = $query->orderBy(['name' => SORT_ASC])->all();
         foreach ($records as $subject) {
             $label = $subject->name;
             if ($subject->code) {
@@ -288,5 +437,17 @@ class AttendanceController extends Controller
     {
         $parsed = \DateTime::createFromFormat('!Y-m-d', $date);
         return $parsed !== false && $parsed->format('Y-m-d') === $date;
+    }
+
+    private function parseOptionalDate($value, $name)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        if (!is_string($value) || !$this->isValidDate($value)) {
+            throw new BadRequestHttpException('The ' . $name . ' date is invalid.');
+        }
+
+        return $value;
     }
 }

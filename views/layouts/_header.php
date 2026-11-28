@@ -16,13 +16,33 @@ $canAccessUsersAndRights = !Yii::$app->user->isGuest && (
     \app\components\AccessHelper::checkRoute('/users/*')
 );
 
-$canAccessAcademic = !Yii::$app->user->isGuest && (
+$canAccessCourse = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageCourse') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    \app\components\AccessHelper::checkRoute('/course/*') ||
+    \app\components\AccessHelper::checkRoute('/course') ||
+    \app\components\AccessHelper::checkRoute('/academic/directory/*')
+);
+
+$canAccessAttendance = !Yii::$app->user->isGuest && (
     Yii::$app->user->can('SuperAdmin') ||
     Yii::$app->user->can('admin') ||
     Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageStudent') ||
     Yii::$app->user->can('manageRbac') ||
-    \app\components\AccessHelper::checkRoute('/academic/*') ||
-    \app\components\AccessHelper::checkRoute('/academic/directory/index')
+    \app\components\AccessHelper::checkRoute('/academic/attendance/*')
+);
+
+$canAccessEmployee = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageEmployee') ||
+    Yii::$app->user->can('manageRbac') ||
+    \app\components\AccessHelper::checkRoute('/employee/*') ||
+    \app\components\AccessHelper::checkRoute('/employee/index')
 );
 
 $items = [
@@ -31,9 +51,19 @@ $items = [
         'url' => ['/site/index'],
     ],
     [
+        'label' => 'Courses',
+        'url' => ['/course'],
+        'visible' => $canAccessCourse,
+    ],
+    [
         'label' => 'Academic',
-        'url' => ['/academic'],
-        'visible' => $canAccessAcademic,
+        'url' => ['/academic/attendance/index'],
+        'visible' => $canAccessAttendance,
+    ],
+    [
+        'label' => 'Employees',
+        'url' => ['/employee'],
+        'visible' => $canAccessEmployee,
     ],
     [
         'label' => 'Users',
