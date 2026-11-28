@@ -101,6 +101,24 @@ $canAccessStudent = !Yii::$app->user->isGuest && (
     canAccessRoute('/student/stu-master/index') ||
     canAccessRoute('/student')
 );
+
+$canManageExam = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageExam') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/exam/*') ||
+    canAccessRoute('/exam/exam/index') ||
+    canAccessRoute('/exam')
+);
+
+$canTakeExam = !Yii::$app->user->isGuest && (
+    $canManageExam ||
+    canAccessRoute('/exam/take/*') ||
+    canAccessRoute('/exam/take/index') ||
+    canAccessRoute('/exam/take')
+);
 ?>
 
 <style>
@@ -705,6 +723,37 @@ body.crm-body {
                         <a class="nav-link <?= isMenuActive(['/student/stu-master/trash']) ?>" href="<?= Url::to(['/student/stu-master/trash']) ?>">
                             <i class="fa-solid fa-trash-can"></i> Trash / Deleted
                         </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($canManageExam || $canTakeExam): ?>
+                <?php $isExamActive = strpos($currentRoute, 'exam/') === 0; ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isExamActive ? 'active' : '' ?>" href="<?= Url::to([$canManageExam ? '/exam/exam/index' : '/exam/take/index']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-file-signature"></i> Online Exams
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isExamActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#examSubmenu"
+                                aria-expanded="<?= $isExamActive ? 'true' : 'false' ?>" aria-label="Toggle Online Exams submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isExamActive ? 'show' : '' ?> crm-submenu" id="examSubmenu">
+                        <?php if ($canManageExam): ?>
+                            <a class="nav-link <?= isMenuActive(['/exam/exam/index', '/exam/exam/create', '/exam/exam/update', '/exam/exam/view', '/exam/exam/questions', '/exam/exam/results', '/exam/exam/attempt-view']) ?>" href="<?= Url::to(['/exam/exam/index']) ?>">
+                                <i class="fa-solid fa-list-check"></i> Manage Exams
+                            </a>
+                            <a class="nav-link <?= isMenuActive(['/exam/question/index', '/exam/question/create', '/exam/question/update']) ?>" href="<?= Url::to(['/exam/question/index']) ?>">
+                                <i class="fa-solid fa-circle-question"></i> Question Bank
+                            </a>
+                        <?php endif; ?>
+                        <?php if ($canTakeExam): ?>
+                            <a class="nav-link <?= isMenuActive(['/exam/take/index', '/exam/take/instructions', '/exam/take/paper', '/exam/take/result']) ?>" href="<?= Url::to(['/exam/take/index']) ?>">
+                                <i class="fa-solid fa-laptop-file"></i> My Exams
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endif; ?>

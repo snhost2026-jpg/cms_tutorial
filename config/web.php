@@ -62,6 +62,9 @@ $config = [
         'employee' => [
             'class' => 'app\modules\employee\Module',
         ],
+        'exam' => [
+            'class' => 'app\modules\exam\Module',
+        ],
         'student' => [
             'class' => 'app\modules\student\StudentModule',
             'createLogin' => true,
@@ -165,6 +168,12 @@ $config = [
                 'user' => 'users/user/index',
                 'student/<action:[\w\-]+>' => 'student/stu-master/<action>',
                 'student' => 'student/stu-master/index',
+                'exam/question/<action:[\w\-]+>' => 'exam/question/<action>',
+                'exam/question' => 'exam/question/index',
+                'exam/take/<action:[\w\-]+>' => 'exam/take/<action>',
+                'exam/take' => 'exam/take/index',
+                'exam/<action:[\w\-]+>' => 'exam/exam/<action>',
+                'exam' => 'exam/exam/index',
                 'auth-assignment/<action:[\w\-]+>' => 'users/auth-assignment/<action>',
                 'auth-assignment' => 'users/auth-assignment/index',
                 '' => 'site/login',
