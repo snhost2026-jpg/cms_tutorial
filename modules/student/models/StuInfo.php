@@ -49,12 +49,15 @@ use yii\db\ActiveRecord;
  * @property string $prev_class
  * @property string $emergency_contact_name
  * @property string $emergency_contact_phone
+ * @property string $Profile_image
  *
  * @property StuMaster $master
  * @property string $fullName
  */
 class StuInfo extends ActiveRecord
 {
+    public $profileImageFile;
+
     const GENDER_MALE = 'MALE';
     const GENDER_FEMALE = 'FEMALE';
     const GENDER_OTHER = 'OTHER';
@@ -79,6 +82,7 @@ class StuInfo extends ActiveRecord
             'address_line', 'city', 'state', 'pincode',
             'prev_school_name', 'prev_class',
             'emergency_contact_name', 'emergency_contact_phone',
+            'Profile_image',
         ];
     }
 
@@ -101,6 +105,8 @@ class StuInfo extends ActiveRecord
 
             [['stu_info_stu_master_id'], 'integer'],
             [['stu_info_stu_master_id'], 'default', 'value' => null],
+            [['Profile_image'], 'string', 'max' => 255],
+            [['profileImageFile'], 'image', 'extensions' => 'png,jpg,jpeg,webp', 'maxSize' => 5 * 1024 * 1024],
 
             [['stu_title'], 'string', 'max' => 15],
             [['stu_gender'], 'string', 'max' => 20],
@@ -181,6 +187,8 @@ class StuInfo extends ActiveRecord
             'prev_class' => 'Previous Class',
             'emergency_contact_name' => 'Emergency Contact Name',
             'emergency_contact_phone' => 'Emergency Contact Phone',
+            'Profile_image' => 'Profile Image',
+            'profileImageFile' => 'Profile Image',
             'fullName' => 'Name',
         ];
     }

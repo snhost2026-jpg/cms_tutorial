@@ -1,14 +1,14 @@
 <?php
 
-namespace app\modules\academic\controllers;
+namespace app\modules\course\controllers;
 
 use Yii;
 use app\components\AccessHelper;
-use app\modules\academic\models\AcademicRecord;
-use app\modules\academic\models\Batch;
-use app\modules\academic\models\Course;
-use app\modules\academic\models\Section;
-use app\modules\academic\models\Subject;
+use app\modules\course\models\CourseRecord;
+use app\modules\course\models\Batch;
+use app\modules\course\models\Course;
+use app\modules\course\models\Section;
+use app\modules\course\models\Subject;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -92,13 +92,15 @@ class DirectoryController extends Controller
             !Yii::$app->user->isGuest
             && !Yii::$app->user->can('SuperAdmin')
             && !Yii::$app->user->can('admin')
+            && !Yii::$app->user->can('manageCourse')
             && !Yii::$app->user->can('manageAcademic')
             && !Yii::$app->user->can('manageRbac')
             && !AccessHelper::checkRoute('/' . $action->getUniqueId())
-            && !AccessHelper::checkRoute('/academic/*')
+            && !AccessHelper::checkRoute('/course/*')
+            && !AccessHelper::checkRoute('/course/directory/*')
             && !AccessHelper::checkRoute('/academic/directory/*')
         ) {
-            throw new ForbiddenHttpException('You are not allowed to access academic management.');
+            throw new ForbiddenHttpException('You are not allowed to access course management.');
         }
 
         return parent::beforeAction($action);
@@ -192,14 +194,14 @@ class DirectoryController extends Controller
     private function getEntity($entity)
     {
         if (!isset($this->_entities[$entity])) {
-            throw new NotFoundHttpException('Academic section not found.');
+            throw new NotFoundHttpException('Course section not found.');
         }
 
         return $this->_entities[$entity];
     }
 
     /**
-     * @param class-string<AcademicRecord> $modelClass
+     * @param class-string<CourseRecord> $modelClass
      * @param int|string $id
      */
     private function findRecord($modelClass, $id)

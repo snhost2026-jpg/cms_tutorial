@@ -50,13 +50,46 @@ $canAccessUsersAndRights = !Yii::$app->user->isGuest && (
     canAccessRoute('/rights/route')
 );
 
-$canAccessAcademic = !Yii::$app->user->isGuest && (
+$canAccessCourse = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageCourse') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/course/*') ||
+    canAccessRoute('/academic/directory/*') ||
+    canAccessRoute('/course')
+);
+
+$canAccessAttendance = !Yii::$app->user->isGuest && (
     Yii::$app->user->can('SuperAdmin') ||
     Yii::$app->user->can('admin') ||
     Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageStudent') ||
     Yii::$app->user->can('manageRbac') ||
-    canAccessRoute('/academic/*') ||
-    canAccessRoute('/academic/directory/index')
+    canAccessRoute('/academic/attendance/*') ||
+    canAccessRoute('/academic/subject-assign/*') ||
+    canAccessRoute('/attendance')
+);
+
+$canAccessTimetable = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageTimetable') ||
+    Yii::$app->user->can('manageAcademic') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/timetable/*') ||
+    canAccessRoute('/timetable/timetable/index') ||
+    canAccessRoute('/timetable')
+);
+
+$canAccessEmployee = !Yii::$app->user->isGuest && (
+    Yii::$app->user->can('SuperAdmin') ||
+    Yii::$app->user->can('admin') ||
+    Yii::$app->user->can('manageEmployee') ||
+    Yii::$app->user->can('manageRbac') ||
+    canAccessRoute('/employee/*') ||
+    canAccessRoute('/employee/index')
 );
 
 $canAccessStudent = !Yii::$app->user->isGuest && (
@@ -530,37 +563,118 @@ body.crm-body {
                 <i class="fa-solid fa-house"></i> Dashboard
             </a>
 
-            <?php if ($canAccessAcademic): ?>
+            <?php if ($canAccessCourse): ?>
                 <?php
-                $isAcademicActive = strpos($currentRoute, 'academic/') === 0;
-                $currentAcademicEntity = Yii::$app->request->get('entity', '');
+                $isCourseActive = strpos($currentRoute, 'course/') === 0;
+                $currentCourseEntity = Yii::$app->request->get('entity', '');
                 ?>
                 <div class="nav-item crm-menu-dropdown">
                     <div class="d-flex align-items-center position-relative">
-                        <a class="nav-link flex-grow-1 <?= $isAcademicActive ? 'active' : '' ?>" href="<?= Url::to(['/academic']) ?>" style="padding-right: 38px;">
-                            <i class="fa-solid fa-graduation-cap"></i> Academic Management
+                        <a class="nav-link flex-grow-1 <?= $isCourseActive ? 'active' : '' ?>" href="<?= Url::to(['/course']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-graduation-cap"></i> Course Management
                         </a>
-                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isAcademicActive ? '' : 'collapsed' ?>"
-                                data-bs-toggle="collapse" data-bs-target="#academicSubmenu"
-                                aria-expanded="<?= $isAcademicActive ? 'true' : 'false' ?>" aria-label="Toggle Academic submenu">
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isCourseActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#courseSubmenu"
+                                aria-expanded="<?= $isCourseActive ? 'true' : 'false' ?>" aria-label="Toggle Course submenu">
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
                     </div>
-                    <div class="collapse <?= $isAcademicActive ? 'show' : '' ?> crm-submenu" id="academicSubmenu">
-                        <a class="nav-link <?= $currentRoute === 'academic/directory/index' ? 'active' : '' ?>" href="<?= Url::to(['/academic']) ?>">
+                    <div class="collapse <?= $isCourseActive ? 'show' : '' ?> crm-submenu" id="courseSubmenu">
+                        <a class="nav-link <?= $currentRoute === 'course/directory/index' ? 'active' : '' ?>" href="<?= Url::to(['/course']) ?>">
                             <i class="fa-solid fa-house"></i> Overview
                         </a>
-                        <a class="nav-link <?= $currentAcademicEntity === 'courses' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'courses']) ?>">
+                        <a class="nav-link <?= $currentCourseEntity === 'courses' ? 'active' : '' ?>" href="<?= Url::to(['/course/directory/records', 'entity' => 'courses']) ?>">
                             <i class="fa-solid fa-book-open"></i> Courses
                         </a>
-                        <a class="nav-link <?= $currentAcademicEntity === 'subjects' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'subjects']) ?>">
+                        <a class="nav-link <?= $currentCourseEntity === 'subjects' ? 'active' : '' ?>" href="<?= Url::to(['/course/directory/records', 'entity' => 'subjects']) ?>">
                             <i class="fa-solid fa-book"></i> Subjects
                         </a>
-                        <a class="nav-link <?= $currentAcademicEntity === 'batches' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'batches']) ?>">
+                        <a class="nav-link <?= $currentCourseEntity === 'batches' ? 'active' : '' ?>" href="<?= Url::to(['/course/directory/records', 'entity' => 'batches']) ?>">
                             <i class="fa-solid fa-layer-group"></i> Batches
                         </a>
-                        <a class="nav-link <?= $currentAcademicEntity === 'sections' ? 'active' : '' ?>" href="<?= Url::to(['/academic/directory/records', 'entity' => 'sections']) ?>">
+                        <a class="nav-link <?= $currentCourseEntity === 'sections' ? 'active' : '' ?>" href="<?= Url::to(['/course/directory/records', 'entity' => 'sections']) ?>">
                             <i class="fa-solid fa-list"></i> Sections
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($canAccessAttendance): ?>
+                <?php $isAttendanceActive = strpos($currentRoute, 'academic/attendance/') === 0 || strpos($currentRoute, 'academic/subject-assign/') === 0; ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isAttendanceActive ? 'active' : '' ?>" href="<?= Url::to(['/academic/attendance/index']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-graduation-cap"></i> Academic
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isAttendanceActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#attendanceSubmenu"
+                                aria-expanded="<?= $isAttendanceActive ? 'true' : 'false' ?>" aria-label="Toggle Academic submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isAttendanceActive ? 'show' : '' ?> crm-submenu" id="attendanceSubmenu">
+                        <a class="nav-link <?= isMenuActive(['/academic/attendance/index']) ?>" href="<?= Url::to(['/academic/attendance/index']) ?>">
+                            <i class="fa-solid fa-clipboard-check"></i> Take Attendance
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/academic/attendance/history', '/academic/attendance/view']) ?>" href="<?= Url::to(['/academic/attendance/history']) ?>">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Attendance History
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/academic/subject-assign/index']) ?>" href="<?= Url::to(['/academic/subject-assign/index']) ?>">
+                            <i class="fa-solid fa-user-check"></i> Subject Assign Teacher
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($canAccessTimetable): ?>
+                <?php $isTimetableActive = strpos($currentRoute, 'timetable/') === 0; ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isTimetableActive ? 'active' : '' ?>" href="<?= Url::to(['/timetable/timetable/index']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-calendar-days"></i> Timetable
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isTimetableActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#timetableSubmenu"
+                                aria-expanded="<?= $isTimetableActive ? 'true' : 'false' ?>" aria-label="Toggle Timetable submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isTimetableActive ? 'show' : '' ?> crm-submenu" id="timetableSubmenu">
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/index']) ?>" href="<?= Url::to(['/timetable/timetable/index']) ?>">
+                            <i class="fa-solid fa-table-cells"></i> Weekly Timetable
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/builder']) ?>" href="<?= Url::to(['/timetable/timetable/builder']) ?>">
+                            <i class="fa-solid fa-calendar-week"></i> Weekly Builder
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/create']) ?>" href="<?= Url::to(['/timetable/timetable/create']) ?>">
+                            <i class="fa-solid fa-plus"></i> Add Class Slot
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/timetable/timetable/list', '/timetable/timetable/update', '/timetable/timetable/view']) ?>" href="<?= Url::to(['/timetable/timetable/list']) ?>">
+                            <i class="fa-solid fa-table-list"></i> All Slots
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($canAccessEmployee): ?>
+                <?php $isEmployeeActive = strpos($currentRoute, 'employee/') === 0; ?>
+                <div class="nav-item crm-menu-dropdown">
+                    <div class="d-flex align-items-center position-relative">
+                        <a class="nav-link flex-grow-1 <?= $isEmployeeActive ? 'active' : '' ?>" href="<?= Url::to(['/employee']) ?>" style="padding-right: 38px;">
+                            <i class="fa-solid fa-user-tie"></i> Employee Management
+                        </a>
+                        <button type="button" class="btn btn-link crm-submenu-toggle <?= $isEmployeeActive ? '' : 'collapsed' ?>"
+                                data-bs-toggle="collapse" data-bs-target="#employeeSubmenu"
+                                aria-expanded="<?= $isEmployeeActive ? 'true' : 'false' ?>" aria-label="Toggle Employee submenu">
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+                    </div>
+                    <div class="collapse <?= $isEmployeeActive ? 'show' : '' ?> crm-submenu" id="employeeSubmenu">
+                        <a class="nav-link <?= $isEmployeeActive ? 'active' : '' ?>" href="<?= Url::to(['/employee']) ?>">
+                            <i class="fa-solid fa-users"></i> All Employees
+                        </a>
+                        <a class="nav-link <?= isMenuActive(['/employee/employee/create']) ?>" href="<?= Url::to(['/employee/employee/create']) ?>">
+                            <i class="fa-solid fa-user-plus"></i> Add Employee
                         </a>
                     </div>
                 </div>

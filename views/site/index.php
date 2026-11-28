@@ -49,7 +49,7 @@ $this->params['breadcrumbs'] = [];
             </div>
         </div>
 
-        <!-- Academic Management Card -->
+        <!-- Course Management Card -->
         <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
                 <div class="card-body p-4">
@@ -57,12 +57,50 @@ $this->params['breadcrumbs'] = [];
                         <div style="width: 48px; height: 48px; background: rgba(25, 135, 84, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
                             <i class="fa-solid fa-graduation-cap text-success fs-5"></i>
                         </div>
-                        <span class="badge bg-success-subtle text-success">Academic</span>
+                        <span class="badge bg-success-subtle text-success">Courses</span>
                     </div>
-                    <h5 class="fw-bold mb-1">Academic Structure</h5>
+                    <h5 class="fw-bold mb-1">Course Management</h5>
                     <p class="text-muted small mb-3">Configure courses, subjects, academic batches, and sections.</p>
-                    <a href="<?= Url::to(['/academic']) ?>" class="btn btn-outline-success btn-sm rounded-pill w-100">
-                        View Academics <i class="fa-solid fa-arrow-right ms-1"></i>
+                    <a href="<?= Url::to(['/course']) ?>" class="btn btn-outline-success btn-sm rounded-pill w-100">
+                        View Courses <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Timetable Card -->
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div style="width: 48px; height: 48px; background: rgba(13, 110, 253, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-calendar-days text-primary fs-5"></i>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary">Schedule</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">Weekly Timetable</h5>
+                    <p class="text-muted small mb-3">Create, update, and view weekly class schedules for batches and faculty.</p>
+                    <a href="<?= Url::to(['/timetable/timetable/index']) ?>" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                        Open Timetable <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Employee Management Card -->
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div style="width: 48px; height: 48px; background: rgba(13, 110, 253, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-user-tie text-primary fs-5"></i>
+                        </div>
+                        <span class="badge bg-primary-subtle text-primary">Employees</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">Employee Management</h5>
+                    <p class="text-muted small mb-3">Manage employee profiles and teaching classifications.</p>
+                    <a href="<?= Url::to(['/employee']) ?>" class="btn btn-outline-primary btn-sm rounded-pill w-100">
+                        View Employees <i class="fa-solid fa-arrow-right ms-1"></i>
                     </a>
                 </div>
             </div>

@@ -1,11 +1,11 @@
 <?php
 
-namespace app\modules\academic\models;
+namespace app\modules\course\models;
 
 use Yii;
 use yii\db\ActiveRecord;
 
-abstract class AcademicRecord extends ActiveRecord
+abstract class CourseRecord extends ActiveRecord
 {
     public function beforeSave($insert)
     {

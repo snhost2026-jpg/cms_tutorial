@@ -10,7 +10,7 @@ use yii\widgets\ActiveForm;
 /* @var $info app\modules\student\models\StuInfo */
 /* @var $lists array */
 
-$form = ActiveForm::begin(['options' => ['class' => 'student-form']]);
+$form = ActiveForm::begin(['options' => ['class' => 'student-form', 'enctype' => 'multipart/form-data']]);
 
 // Helpers to keep markup concise and consistent
 $col = function ($model, $attr, $size = 4, $type = 'text') use ($form) {
@@ -47,6 +47,17 @@ $classField = function ($attr, $key, $size = 4) use ($form, $master, $lists) {
             <?= $col($info, 'application_no', 3) ?>
             <?= $col($info, 'stu_admission_date', 3, 'date') ?>
             <?= $select($master, 'is_status', StuMaster::statusOptions(), 3) ?>
+        </div>
+        <div class="row g-3 mt-1 align-items-end">
+            <div class="col-md-6">
+                <?= $form->field($info, 'profileImageFile')->fileInput(['accept' => 'image/png,image/jpeg,image/webp','class' => 'form-control']) ?>
+            </div>
+            <?php if (!empty($info->Profile_image)): ?>
+                <div class="col-md-6">
+                    <div class="text-muted small mb-1">Current profile image</div>
+                    <?= Html::img($info->Profile_image, ['alt' => 'Student profile', 'style' => 'width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid #dee2e6']) ?>
+                </div>
+            <?php endif; ?>
         </div>
         <div class="row g-3 mt-1">
             <?= $select($info, 'stu_title', StuInfo::titleOptions(), 2) ?>

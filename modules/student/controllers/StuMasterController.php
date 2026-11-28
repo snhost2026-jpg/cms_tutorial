@@ -6,11 +6,11 @@ use Yii;
 use app\modules\student\models\StuInfo;
 use app\modules\student\models\StuMaster;
 use app\modules\student\models\StuMasterSearch;
-use yii\db\Expression;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
  * CRUD for students: list, view, create, update, soft delete, trash/restore
@@ -76,6 +76,7 @@ class StuMasterController extends Controller
         $request = Yii::$app->request;
 
         if ($master->load($request->post()) && $info->load($request->post())) {
+            $info->profileImageFile = UploadedFile::getInstance($info, 'profileImageFile');
             $valid = $info->validate();
             $valid = $master->validate() && $valid;
 
@@ -105,6 +106,10 @@ class StuMasterController extends Controller
                         'stu_info_stu_master_id' => $master->stu_master_id,
                         'stu_unique_id' => $info->stu_unique_id,
                     ]);
+                    $this->saveProfileImage($info, $master->stu_master_id);
+                    if ($info->Profile_image) {
+                        $info->updateAttributes(['Profile_image' => $info->Profile_image]);
+                    }
 
                     $tx->commit();
                 } catch (\Throwable $e) {
@@ -118,7 +123,7 @@ class StuMasterController extends Controller
 
                 $msg = 'Student saved. Registration no: ' . $info->stu_unique_id . '.';
                 if ($tempPassword !== null) {
-                    $msg .= ' Temporary password: ' . $tempPassword . ' (shown only once).';
+                    $msg .= ' Login ID and initial password: ' . $info->stu_unique_id . ' (change it after first login).';
                 }
                 Yii::$app->session->setFlash('success', $msg);
                 return $this->redirect(['view', 'id' => $master->stu_master_id]);
@@ -143,6 +148,7 @@ class StuMasterController extends Controller
         $request = Yii::$app->request;
 
         if ($master->load($request->post()) && $info->load($request->post())) {
+            $info->profileImageFile = UploadedFile::getInstance($info, 'profileImageFile');
             $valid = $info->validate();
             $valid = $master->validate() && $valid;
 
@@ -156,6 +162,10 @@ class StuMasterController extends Controller
                     $master->save(false);
                     if ($isNewInfo || $info->stu_info_stu_master_id != $master->stu_master_id) {
                         $info->updateAttributes(['stu_info_stu_master_id' => $master->stu_master_id]);
+                    }
+                    $this->saveProfileImage($info, $master->stu_master_id);
+                    if ($info->Profile_image) {
+                        $info->updateAttributes(['Profile_image' => $info->Profile_image]);
                     }
                     $tx->commit();
                 } catch (\Throwable $e) {
@@ -275,39 +285,76 @@ class StuMasterController extends Controller
      * Creates a login in the host app's user table and assigns the role.
      * Only runs when the module option createLogin is true.
      *
-     * @return array [user id, temporary password]
+     * @return array [user id, initial password]
      */
     protected function createLoginAccount(StuInfo $info)
     {
-        $userClass = '\app\models\User';
-        $authClass = '\app\models\AuthAssignment';
-        if (!class_exists($userClass) || !class_exists($authClass)) {
-            throw new \RuntimeException('createLogin is on, but app\models\User or app\models\AuthAssignment was not found.');
+        if (empty($info->stu_unique_id)) {
+            throw new \RuntimeException('A registration number is required to create the student login.');
         }
 
-        $password = Yii::$app->security->generateRandomString(10);
+        $password = $info->stu_unique_id;
         $hasher = $this->module->passwordHasher;
         $hash = $hasher ? call_user_func($hasher, $password) : Yii::$app->security->generatePasswordHash($password);
 
-        $user = new $userClass();
-        $user->user_login_id = $info->stu_unique_id;
-        $user->user_password = $hash;
-        $user->user_type = 'S';
-        $user->created_by = Yii::$app->user->id;
-        $user->created_at = new Expression('NOW()');
+        $user = new \app\models\User();
+        $user->username = $info->stu_unique_id;
+        $user->email = $info->stu_email_id ?: '';
+        $user->auth_key = Yii::$app->security->generateRandomString();
+        $user->password_hash = $hash;
+        $user->status = 10;
+        $user->created_at = time();
+        $user->updated_at = time();
         if (!$user->save(false)) {
             throw new \RuntimeException('Could not create the login user.');
         }
 
-        $auth = new $authClass();
-        $auth->item_name = $this->module->loginRole;
-        $auth->user_id = $user->user_id;
-        $auth->created_at = time();
-        if (!$auth->save(false)) {
-            throw new \RuntimeException('Could not assign the login role.');
+        $authManager = Yii::$app->authManager;
+        $role = $authManager->getRole($this->module->loginRole);
+        if ($role === null) {
+            $role = $authManager->createRole($this->module->loginRole);
+            $role->description = 'Student login account';
+            $authManager->add($role);
+        }
+        $authManager->assign($role, $user->id);
+
+        return [$user->id, $password];
+    }
+
+    protected function saveProfileImage(StuInfo $info, $studentMasterId)
+    {
+        if ($info->profileImageFile === null) {
+            return;
         }
 
-        return [$user->user_id, $password];
+        $directory = Yii::getAlias('@webroot/uploads/students');
+        if (!is_dir($directory) && !mkdir($directory, 0775, true) && !is_dir($directory)) {
+            throw new \RuntimeException('Could not create the student image directory.');
+        }
+
+        $extension = strtolower($info->profileImageFile->extension);
+        $filename = 'student_' . (int) $studentMasterId . '.' . $extension;
+        $absolutePath = $directory . DIRECTORY_SEPARATOR . $filename;
+
+        foreach (glob($directory . DIRECTORY_SEPARATOR . 'student_' . (int) $studentMasterId . '.*') as $existingFile) {
+            if (is_file($existingFile)) {
+                @unlink($existingFile);
+            }
+        }
+
+        if (!$info->profileImageFile->saveAs($absolutePath)) {
+            throw new \RuntimeException('Could not save the profile image.');
+        }
+
+        $oldPath = $info->Profile_image;
+        $info->Profile_image = '/uploads/students/' . $filename;
+
+        if ($oldPath && strpos($oldPath, '/uploads/students/') === 0) {
+            $oldAbsolutePath = Yii::getAlias('@webroot') . str_replace('/', DIRECTORY_SEPARATOR, $oldPath);
+            if ($oldAbsolutePath !== $absolutePath && is_file($oldAbsolutePath)) {
+                @unlink($oldAbsolutePath);
+            }
+        }
     }
 
     protected function findModel($id)

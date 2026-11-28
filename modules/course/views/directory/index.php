@@ -5,7 +5,7 @@ use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var array<string, array<string, mixed>> $entities */
 
-$this->title = 'Academic Management';
+$this->title = 'Course Management';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">

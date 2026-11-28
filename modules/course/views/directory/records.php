@@ -9,14 +9,14 @@ use yii\helpers\Html;
 /** @var \yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = $definition['label'];
-$this->params['breadcrumbs'][] = ['label' => 'Academic Management', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Course Management', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="fw-bold mb-0"><?= Html::encode($this->title) ?></h2>
     <div class="d-flex gap-2">
-        <?= Html::a('Academic Home', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
+        <?= Html::a('Course Home', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
         <?= Html::a('Add ' . Html::encode($definition['singular']), ['create', 'entity' => $entity], ['class' => 'btn btn-primary']) ?>
     </div>
 </div>

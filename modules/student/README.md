@@ -60,4 +60,4 @@ master id back into `stu_info.stu_info_stu_master_id`. Any error rolls everythin
 * Dates are stored as `YYYY-MM-DD` and entered with the browser's date picker.
 * Phone numbers are strings (7-15 chars, optional leading `+`).
 * Uniqueness is enforced for Aadhaar, student email and registration no. only when a value is entered. Parent emails may repeat (siblings).
-* Not included: guardians as separate rows, siblings, documents, health records, fees, attendance. Add them as new tables/tabs when needed.
+* Not included: guardians as separate rows, siblings, documents, health records, and fees. Attendance is managed from the Academic module.

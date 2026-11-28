@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS `stu_info` (
   `prev_class`              VARCHAR(30)  NULL,
   `emergency_contact_name`  VARCHAR(100) NULL,
   `emergency_contact_phone` VARCHAR(15)  NULL,
+  `Profile_image`           VARCHAR(255) NULL,
   PRIMARY KEY (`stu_info_id`),
   UNIQUE KEY `uq_stu_info_unique_id` (`stu_unique_id`),   -- NULLs may repeat
   UNIQUE KEY `uq_stu_info_aadhaar`   (`stu_aadhaar`),
