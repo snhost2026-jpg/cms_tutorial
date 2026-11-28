@@ -136,7 +136,9 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `created_at`, `updated_a
 ('manageRbac', 2, 'Manage RBAC and user assignments capability', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
 ('viewOwnProfile', 2, 'View own profile capability', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
 ('/academic/*', 2, 'Academic module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
-('/student/*', 2, 'Student module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+('/student/*', 2, 'Student module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('/exam/*', 2, 'Online Exam module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('/exam/take/*', 2, 'Student take exam portal routes', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 -- Assign wildcard and permissions to SuperAdmin and admin
 INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
@@ -418,5 +420,123 @@ INSERT IGNORE INTO `auth_item` (`name`, `type`, `description`, `created_at`, `up
 INSERT IGNORE INTO `auth_item_child` (`parent`, `child`) VALUES
 ('manager', '/timetable/*'),
 ('manageTimetable', '/timetable/*');
+
+-- ------------------------------------------------------------------------------
+-- Table structure for Online Exam Module
+-- ------------------------------------------------------------------------------
+DROP TABLE IF EXISTS `exam_attempt_answers`;
+DROP TABLE IF EXISTS `exam_attempts`;
+DROP TABLE IF EXISTS `exam_question_map`;
+DROP TABLE IF EXISTS `exams`;
+DROP TABLE IF EXISTS `exam_questions`;
+
+CREATE TABLE `exam_questions` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `course_id` INT DEFAULT NULL,
+  `subject_id` INT DEFAULT NULL,
+  `question_text` TEXT NOT NULL,
+  `option_a` VARCHAR(500) NOT NULL,
+  `option_b` VARCHAR(500) NOT NULL,
+  `option_c` VARCHAR(500) DEFAULT NULL,
+  `option_d` VARCHAR(500) DEFAULT NULL,
+  `correct_option` CHAR(1) NOT NULL,
+  `marks` DECIMAL(6,2) NOT NULL DEFAULT 1.00,
+  `difficulty` VARCHAR(20) NOT NULL DEFAULT 'medium',
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1,
+  `created_by` INT DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `updated_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_exam_questions_course` (`course_id`),
+  KEY `idx_exam_questions_subject` (`subject_id`),
+  KEY `idx_exam_questions_difficulty` (`difficulty`),
+  KEY `idx_exam_questions_active` (`is_active`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `exams` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(200) NOT NULL,
+  `description` TEXT,
+  `course_id` INT DEFAULT NULL,
+  `batch_id` INT DEFAULT NULL,
+  `section_id` INT DEFAULT NULL,
+  `subject_id` INT DEFAULT NULL,
+  `duration_minutes` INT DEFAULT NULL,
+  `start_time` DATETIME DEFAULT NULL,
+  `end_time` DATETIME DEFAULT NULL,
+  `pass_percentage` DECIMAL(5,2) DEFAULT NULL,
+  `shuffle_questions` TINYINT(1) NOT NULL DEFAULT 0,
+  `show_result` TINYINT(1) NOT NULL DEFAULT 1,
+  `status` VARCHAR(20) NOT NULL DEFAULT 'draft',
+  `created_by` INT DEFAULT NULL,
+  `created_at` DATETIME DEFAULT NULL,
+  `updated_by` INT DEFAULT NULL,
+  `updated_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_exams_course` (`course_id`),
+  KEY `idx_exams_batch` (`batch_id`),
+  KEY `idx_exams_section` (`section_id`),
+  KEY `idx_exams_subject` (`subject_id`),
+  KEY `idx_exams_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `exam_question_map` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `exam_id` INT UNSIGNED NOT NULL,
+  `question_id` INT UNSIGNED NOT NULL,
+  `sort_order` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_exam_question_map` (`exam_id`, `question_id`),
+  KEY `idx_exam_question_map_exam` (`exam_id`),
+  KEY `idx_exam_question_map_question` (`question_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `exam_attempts` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `exam_id` INT UNSIGNED NOT NULL,
+  `user_id` INT NOT NULL,
+  `stu_master_id` INT UNSIGNED DEFAULT NULL,
+  `question_order` TEXT,
+  `started_at` DATETIME NOT NULL,
+  `submitted_at` DATETIME DEFAULT NULL,
+  `duration_used_sec` INT NOT NULL DEFAULT 0,
+  `total_questions` INT NOT NULL DEFAULT 0,
+  `answered_count` INT NOT NULL DEFAULT 0,
+  `correct_count` INT NOT NULL DEFAULT 0,
+  `total_marks` DECIMAL(8,2) NOT NULL DEFAULT 0.00,
+  `obtained_marks` DECIMAL(8,2) NOT NULL DEFAULT 0.00,
+  `percentage` DECIMAL(5,2) NOT NULL DEFAULT 0.00,
+  `is_passed` TINYINT(1) DEFAULT NULL,
+  `status` VARCHAR(20) NOT NULL DEFAULT 'in_progress',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_exam_attempts_exam_user` (`exam_id`, `user_id`),
+  KEY `idx_exam_attempts_exam` (`exam_id`),
+  KEY `idx_exam_attempts_user` (`user_id`),
+  KEY `idx_exam_attempts_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `exam_attempt_answers` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `attempt_id` INT UNSIGNED NOT NULL,
+  `question_id` INT UNSIGNED NOT NULL,
+  `selected_option` CHAR(1) DEFAULT NULL,
+  `is_marked_review` TINYINT(1) NOT NULL DEFAULT 0,
+  `is_correct` TINYINT(1) DEFAULT NULL,
+  `marks_awarded` DECIMAL(6,2) NOT NULL DEFAULT 0.00,
+  `updated_at` DATETIME DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_exam_attempt_answers` (`attempt_id`, `question_id`),
+  KEY `idx_exam_attempt_answers_attempt` (`attempt_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `auth_item` (`name`, `type`, `description`, `created_at`, `updated_at`) VALUES
+('manageExam', 2, 'Manage online exams and question bank', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('/exam/*', 2, 'Online Exam module full route access', UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('/exam/take/*', 2, 'Student take exam portal routes', UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+INSERT IGNORE INTO `auth_item_child` (`parent`, `child`) VALUES
+('manager', '/exam/*'),
+('manageExam', '/exam/*');
 
 SET FOREIGN_KEY_CHECKS = 1;

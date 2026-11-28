@@ -87,6 +87,25 @@ $this->params['breadcrumbs'] = [];
             </div>
         </div>
 
+        <!-- Online Exams Card -->
+        <div class="col-md-6 col-xl-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div style="width: 48px; height: 48px; background: rgba(25, 135, 84, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-file-signature text-success fs-5"></i>
+                        </div>
+                        <span class="badge bg-success-subtle text-success">Exams</span>
+                    </div>
+                    <h5 class="fw-bold mb-1">Online Exams</h5>
+                    <p class="text-muted small mb-3">Build MCQ question banks, schedule exams, and auto-grade student results.</p>
+                    <a href="<?= Url::to(['/exam/exam/index']) ?>" class="btn btn-outline-success btn-sm rounded-pill w-100">
+                        Open Exams <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <!-- Employee Management Card -->
         <div class="col-md-6 col-xl-4">
             <div class="card border-0 shadow-sm h-100" style="border-radius: 14px;">
